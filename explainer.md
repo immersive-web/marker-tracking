@@ -58,7 +58,7 @@ Once the session is active, the application can call `getTrackedImageScores()` o
 async function onSessionStarted(session) {
   const scores = await session.getTrackedImageScores();
   let trackableImages = 0;
-  for (const index = 0; index < scores.length; ++index) {
+  for (let index = 0; index < scores.length; ++index) {
     if (scores[index] == 'untrackable') {
       MarkImageUntrackable(index);
     } else {
@@ -81,6 +81,8 @@ for (const result of results) {
 
   // Get the pose of the image relative to a reference space.
   const pose = frame.getPose(result.imageSpace, referenceSpace);
+
+  const state = result.trackingState;
 
   if (state == "tracked") {
     HighlightImage(imageIndex, pose);
