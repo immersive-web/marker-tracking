@@ -123,6 +123,78 @@ function onAnimationLoop(frame) {
 }
 ```
 
+## Alternatives Considered
+
+Overall, the goal for this API is to provide useful functionality to
+applications that support specific use cases, while not granting the
+site full access to the user's camera feed. The API is intended to
+provide limited information about prespecified images in the user's
+environment, with ways for the user agent to enforce restrictions such
+as requiring a prominent view of the image before initiating tracking.
+
+### Detailed specification of trackable image types and related algorithms
+
+This API leaves it up to the user agent to define which types of
+images are considered trackable and what algorithms are used to
+recognize and track them. This is a rapidly evolving field and the
+state of the art is advancing steadily. Having a detailed
+specification and associated detailed requirements for trackable
+images would likely be a significant burden on implementors, while
+also making it more difficult to benefit from advances in device
+capabilities. The expectation is that the user agent can use platform
+features to perform image tracking and that this is also likely to be
+more efficient and scalable than custom image analysis by the user agent.
+
+### Raw Camera Access
+
+The proposed WebXR Raw Camera Access API
+([explainer](https://github.com/immersive-web/raw-camera-access/blob/main/explainer.md),
+[spec draft](https://immersive-web.github.io/raw-camera-access/))
+would allow applications to use their own image processing code to do
+roughly equivalent image tracking using computer vision
+algorithms.
+
+Raw camera access has some potential advantages. For example,
+application-side image processing could potentially produce more
+consistent results across platforms. There would still be a dependency
+on camera characteristics and lighting conditions that affect the
+ability to detect and track images, but it avoids the issue of
+platform-dependent image recognition logic that may affect which
+classes of images are detectable.
+
+On the other hand, raw camera access offers less privacy protection
+since it requires granting direct image access to the application and
+its origin site. If that access is granted, the user agent has no way
+to protect the user from potentially hostile sites that might upload
+image streams or search for objects of interest in the user's
+environment.
+
+Also, a platform-native image tracking implementation can take
+advantage of optimizations such as specialized processors which can be
+faster and more power efficient than an equivalent JavaScript or WASM
+implementation.
+
+### Barcode Detection API
+
+The Barcode Detection API ([spec
+draft](https://wicg.github.io/shape-detection-api/#barcode-detection-api)
+is intended to support detecting linear and two-dimensional barcodes
+in images or live image feeds, for example finding and decoding QR
+codes.
+
+The Barcode Detection API's [Security and Privacy
+Considerations](https://wicg.github.io/shape-detection-api/#security-and-privacy-considerations)
+say that _It is critical for implementations to ensure that it cannot
+be used to bypass protections that would otherwise protect an image
+source from inspection_. This implies that the site should have raw
+camera access permission or similar access rights before being granted
+use of this API.
+
+It would potentially be useful to support the Barcode Detection API in
+conjunction with the WebXR Raw Camera Access API as a developer
+convenience.
+
+
 
 ## Appendix: Proposed Web IDL
 
