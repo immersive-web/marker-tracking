@@ -29,9 +29,7 @@ Request image tracking as a required or optional feature using its feature descr
 ```js
 const img = document.getElementById('img);
 // Ensure the image is loaded and ready for use
-// FIXME: does createImageBitmap do this implicitly?
-await img.decode();
-const imgBitmap = createImageBitmap(img);
+const imgBitmap = await createImageBitmap(img);
 
 const session = await navigator.xr.requestSession('immersive-ar', {
   requiredFeatures: ['image-tracking'],
