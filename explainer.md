@@ -192,8 +192,26 @@ use of this API.
 
 It would potentially be useful to support the Barcode Detection API in
 conjunction with the WebXR Raw Camera Access API as a developer
-convenience.
+convenience, but that is a separate feature, and it would not seem
+appropriate to allow generic barcode identification and tracking
+without raw camera access.
 
+Applications can supply specific instances of QR codes or marker
+images to the image tracking API as part of the `trackedImages` list,
+and in that case it is up to the UA and device to determine if those
+images are trackable. An implementation designed for naturalistic
+images may be unable to find sufficient features for tracking in such
+a marker.
+
+### Using the pose `emulatedPosition` flag
+
+The image tracking result uses a separate enum to distinguish
+`"tracked"` and `"emulated"` results. An alternative would have been
+to use the `emulatedPosition` boolean attribute for XRPose. However,
+that attribute is intended to indicate a pose with a known orientation
+combined with an unknown position, for example a 3DoF headset, and
+that doesn't fit this use case where both orientation and pose are
+emulated.
 
 
 ## Appendix: Proposed Web IDL
