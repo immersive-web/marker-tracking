@@ -635,7 +635,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2016/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">WebXR Marker Tracking Module</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Draft Community Group Report, <time class="dt-updated" datetime="2021-06-29">29 June 2021</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Draft Community Group Report, <time class="dt-updated" datetime="2021-07-02">2 July 2021</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -846,7 +846,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
        <dd data-md>
         <ol>
          <li data-md>
-          <p>If <var>image</var>’s <a data-link-type="dfn" href="#image-was-detected" id="ref-for-image-was-detected①">image was detected</a> flag is <code>false</code>, and if the <a data-link-type="dfn" href="#suitable-for-tracking" id="ref-for-suitable-for-tracking②">suitable for tracking</a> algorithm for <var>image</var> returns <code>false</code>, abort these steps.</p>
+          <p>If <var>image</var>’s <a data-link-type="dfn" href="#image-was-detected" id="ref-for-image-was-detected①">image was detected</a> flag is <code>false</code>, and if the <a data-link-type="dfn" href="#suitable-for-tracking" id="ref-for-suitable-for-tracking②">suitable for tracking</a> algorithm for <var>image</var> returns <code>false</code>, continue to the next entry.</p>
          <li data-md>
           <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-was-detected" id="ref-for-image-was-detected②">image was detected</a> attribute to <code>true</code>.</p>
          <li data-md>
@@ -889,7 +889,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
       <p>For each <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image①①">tracked image</a> <var>image</var> in <var>session</var>’s <a data-link-type="dfn" href="#xrsession-list-of-tracked-images" id="ref-for-xrsession-list-of-tracked-images②">list of tracked images</a>:</p>
       <ol>
        <li data-md>
-        <p>If <var>image</var>’s <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state⑦">image tracking state</a> is <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked⑤">"untracked"</a></code>, abort these steps.</p>
+        <p>If <var>image</var>’s <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state⑦">image tracking state</a> is <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked⑤">"untracked"</a></code>, continue to the next entry.</p>
        <li data-md>
         <p>Let <var>result</var> be an <code class="idl"><a data-link-type="idl" href="#xrimagetrackingresult" id="ref-for-xrimagetrackingresult①">XRImageTrackingResult</a></code></p>
        <li data-md>

@@ -253,7 +253,7 @@ In order to <dfn>update tracked images</dfn> for an {{XRFrame}} |frame| in an {{
 
     : Otherwise:
     ::
-        1. If |image|'s [=image was detected=] flag is `false`, and if the [=suitable for tracking=] algorithm for |image| returns `false`, abort these steps.
+        1. If |image|'s [=image was detected=] flag is `false`, and if the [=suitable for tracking=] algorithm for |image| returns `false`, continue to the next entry.
         1. Set |image|'s [=image was detected=] attribute to `true`.
         1. Set |image|'s [=image tracking state=] to {{XRImageTrackingState/"tracked"}} if the image is actively being tracked, or to {{XRImageTrackingState/"emulated"}} if the position is inferred based on previous observations.
         1. Set |image|'s [=image space=] based on the XR device's estimate of the image's pose.
@@ -291,7 +291,7 @@ In order to <dfn>obtain image tracking results</dfn> for an {{XRFrame}} |frame|,
   1. Let |session| be |frame|'s {{XRFrame/session}} object.
   1. Let |results| be an empty list.
   1. For each [=tracked image=] |image| in |session|'s [=XRSession/list of tracked images=]:
-     1. If |image|'s [=image tracking state=] is {{XRImageTrackingState/"untracked"}}, abort these steps.
+     1. If |image|'s [=image tracking state=] is {{XRImageTrackingState/"untracked"}}, continue to the next entry.
      1. Let |result| be an {{XRImageTrackingResult}}
      1. Set |result|'s {{XRImageTrackingResult/imageSpace}} to |image|'s [=image space=].
      1. Set |result|'s {{XRImageTrackingResult/index}} to |image|'s [=image index=]
