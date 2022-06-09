@@ -27,7 +27,7 @@ Since detecting and tracking these images happens locally on the device, this fu
 Request image tracking as a required or optional feature using its feature descriptor and a list of images to track:
 
 ```js
-const img = document.getElementById('img);
+const img = document.getElementById('img');
 // Ensure the image is loaded and ready for use
 const imgBitmap = await createImageBitmap(img);
 
