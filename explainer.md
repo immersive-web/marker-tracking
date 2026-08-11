@@ -1,9 +1,5 @@
 # WebXR Marker Tracking API - Explainer [DRAFT]
 
-## DISCLAIMER
-
-**WARNING:** This is an early draft of a proposed API that's still under active discussion. **DO NOT** quote this draft as a specification, and expect incompatible changes in the future.
-
 ## Introduction
 
 The Marker Tracking proposal aims to extend the [WebXR Device API](https://www.w3.org/TR/webxr/) with a WebXR way to detect, decode and track physical machine-readable markers in the user’s environment. The initial version focuses on QR codes, while keeping marker tracking separate from the existing [image tracking proposal](https://github.com/immersive-web/image-tracking/tree/main) for developer supplied image targets.
