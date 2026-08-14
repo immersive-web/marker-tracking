@@ -251,16 +251,7 @@ Marker tracking is sensitive functionality. Even without exposing raw camera fra
 
 - Changes in marker tracking state over time during a session.
 
-Decoded marker data can be especially sensitive. QR codes and related barcode formats may encode product identifiers, location identifiers, serial numbers, URLs, authentication-related data or other information that the user did not explicitly type into the application. Some standards, such as GS1 Digital Link, are specifically designed to connect physical products or identifiers to online information. This makes marker contents useful, but also means they should be treated as environment derived data. The proposal should minimise exposure by avoiding raw camera access and exposing only constrained marker results. It should also define clear feature gating and permission expectations, aligned with the WebXR Device API’s existing approach to sensitive immersive capabilities.
-
-Marker tracking is sensitive functionality. Even without exposing raw camera frames, the API may reveal information about the user’s physical environment and surroundings. The main information exposed by this proposal may include:
-- Presence of supported physical markers near the user;
-- Spatial pose or approximate location of those markers in physical space;
-- Marker size, extents or geometry, where available;
-- Decoded marker contents, such as URLs, identifiers or application-specific data; and
-- Changes in marker tracking state over time during a session.
-
-Decoded marker data can be especially sensitive. QR codes and related barcode formats may encode product identifiers, location identifiers, serial numbers, URLs, authentication related data or other information that the user did not explicitly provide to the application. Some standards, such as GS1 Digital Link, are designed to connect physical products or identifiers to online information. Decoded payloads should therefore be treated as data observed from the user’s physical environment and as untrusted input. The proposal should not require user agents to automatically navigate to, fetch, resolve or otherwise act on decoded payload data as part of marker detection or tracking.
+Decoded marker data can be especially sensitive. QR codes and related barcode formats may encode product identifiers, location identifiers, serial numbers, URLs, authentication-related data or other information that the user did not explicitly type into the application. Some standards, such as GS1 Digital Link, are specifically designed to connect physical products or identifiers to online information. This makes marker contents useful, but also means they should be treated as environment derived data.
 
 The proposal should minimise exposure by avoiding raw camera access and exposing only constrained marker results. It should define clear feature gating and user awareness expectations, aligned with the WebXR Device API’s approach to sensitive immersive capabilities, and consider whether decoded marker payloads require different treatment from pose-only marker tracking.
 
