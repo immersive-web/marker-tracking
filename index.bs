@@ -1,0 +1,491 @@
+<pre class="metadata">
+Title: WebXR Marker Tracking Module
+Shortname: webxr-marker-tracking
+Level: 1
+Status: w3c/CG-DRAFT
+Group: immersivewebcg
+ED: https://immersive-web.github.io/marker-tracking/
+Repository: immersive-web/marker-tracking
+!Participate: <a href="https://github.com/immersive-web/marker-tracking/issues/new">File an issue</a> (<a href="https://github.com/immersive-web/marker-tracking/issues">open issues</a>)
+!Participate: <a href="https://lists.w3.org/Archives/Public/public-immersive-web/">Mailing list archive</a>
+!Participate: <a href="irc://irc.w3.org:6665/">W3C’s #immersive-web IRC</a>
+Editor: Muadh Al Kalbani 153370, Samsung https://samsung.com/, m.alkalbani@samsung.com
+Editor: Alex Cooper 114716, Google http://google.com/, alcooper@google.com
+Abstract: The WebXR Marker Tracking Module expands the WebXR Device API with functionality to detect, decode and spatially track supported physical markers in the user's environment.
+</pre>
+
+<pre class="link-defaults">
+spec: webxr; type: dfn; text: feature descriptor
+spec: webxr; type: dfn; text: XRSession
+spec: webxr; type: dfn; text: XRFrame
+spec: webxr; type: dfn; text: XRSpace
+spec: webxr; type: dfn; text: immersive session
+spec: webxr; type: dfn; text: initialize the session
+spec: webxr; type: dfn; text: list of frame updates
+spec: webxr; type: dfn; for: XRSession; text: set of granted features
+spec: webxr; type: dfn; text: capable of supporting
+</pre>
+
+<main>
+
+<h2 class="heading settled" data-level="1" id="intro">
+  <span class="secno">1.</span>
+  <span class="content">Introduction</span>
+  <a class="self-link" href="#intro"></a>
+</h2>
+
+<section class="non-normative">
+This module expands the <dfn export>WebXR Device API</dfn> with a mechanism for detecting supported physical markers in the user's environment, decoding marker data and tracking a marker's spatial pose.
+The initial version of this module focuses on QR code markers. Unlike the WebXR Image Tracking proposal, which is designed for image targets supplied by the application when requesting an XR session, marker tracking is intended to support physical markers discovered during an active XR session.
+Marker detection, decoding and tracking are performed by the XR device and user agent. The application receives constrained marker tracking results, rather than raw camera images. These results are intended to allow an application to associate decoded marker data with a marker's pose and use that pose to place or update virtual content in the user's environment.
+</section>
+
+<h2 class="heading settled" data-level="2" id="marker-tracking-discovery-model">
+  <span class="secno">2.</span>
+  <span class="content">Discovery Model</span>
+  <a class="self-link" href="#marker-tracking-discovery-model"></a>
+</h2>
+
+<h3 class="heading settled" data-level="2.1" id="marker">
+  <span class="secno">2.1</span>
+  <span class="content">Marker</span>
+  <a class="self-link" href="#marker"></a>
+</h3>
+
+A marker is a physical, machine-readable visual target of a supported <dfn>marker symbology</dfn>.
+A <dfn export lt="tracked marker|tracked markers">tracked marker</dfn> corresponds to the information used by the XR device to detect, decode and spatially track one physical instance of a marker during an <dfn>XRSession</dfn>.
+A tracked marker represents a physical instance, rather than only its decoded data. Two physically distinct markers that encode identical data may be represented as distinct tracked markers when the XR device can distinguish them.
+
+Each tracked marker has an associated:
+
+1. [=marker symbology=];
+
+2. [=marker tracking state=];
+
+3. <dfn>marker space</dfn>;
+
+4. <dfn>decoded marker payload</dfn>, where available;
+
+5. <dfn>marker extent</dfn>, where available; and
+
+6. <dfn>marker identifier</dfn>.
+
+A marker identifier is an internal identifier used by the user agent to associate observations of a tracked marker during an [=XRSession=]. Whether and how marker identity is exposed to applications is defined separately by the marker-tracking result model.
+
+<h3 class="heading settled" data-level="2.2" id="qr-code-markers">
+  <span class="secno">2.2</span>
+  <span class="content">QR code markers</span>
+  <a class="self-link" href="#qr-code-markers"></a>
+</h3>
+
+This first version of the module defines QR codes as its initial supported marker family. A QR code is a two-dimensional matrix barcode that can store various types of data. A user agent determines whether a physical QR code is supported and suitable for detection and tracking.
+This module defines an initial Web-facing representation for decoded QR code payload data through the `payloadString` attribute on `XRMarkerTrackingResult`. That representation specifies how decoded text is exposed to Web applications. Future versions may expose byte-oriented payload data. It does not define the application-specific meaning, safety, language, directionality or interpretation of that data.
+A user agent may be unable to detect or track QR codes whose physical presentation is unsuitable for reliable detection, including codes with insufficient contrast, visual modifications, embedded imagery, altered modules or other customisation. Non-normative author guidance for marker presentation may be provided separately.
+Future versions of this module may define and support additional marker symbologies. Such additions must not change the behaviour of QR code markers defined by this version.
+
+<h3 class="heading settled" data-level="2.3" id="marker-tracking-state-section">
+  <span class="secno">2.3</span>
+  <span class="content">Marker tracking state</span>
+  <a class="self-link" href="#marker-tracking-state-section"></a>
+</h3>
+
+A tracked marker has an associated <dfn>marker tracking state</dfn>. The marker tracking state describes whether the XR device is actively observing the marker, or is reporting a pose derived from a previous observation.
+The possible marker tracking states are:
+<dl> <dt><dfn><code>"untracked"</code></dfn></dt> <dd> The XR device has no current tracking information for the marker. </dd>
+<dt><dfn><code>"tracked"</code></dfn></dt> <dd> The marker is currently being actively tracked by the XR device. The marker is at least partially visible to a tracking camera or otherwise actively observed by the tracking system. </dd>
+<dt><dfn><code>"emulated"</code></dfn></dt> <dd> The marker was previously tracked during the current XR session, but its current pose is based on a previous observation rather than active tracking. </dd> </dl>
+
+An [="emulated"=] marker pose may be useful for a marker that is expected to remain stationary. Applications should not rely on an emulated pose for a marker that may be moving.
+The [="untracked"=] state is an internal tracking state. The marker tracking results defined by this module only report markers whose state is [="tracked"=] or [="emulated"=].
+
+<h3 class="heading settled" data-level="2.4" id="marker-space-and-geometry">
+  <span class="secno">2.4</span>
+  <span class="content">Marker space and geometry</span>
+  <a class="self-link" href="#marker-space-and-geometry"></a>
+</h3>
+
+A tracked marker has an associated marker space, which is a device <dfn>XRSpace</dfn> representing the tracking system's 6DoF pose of the marker in the user's environment.
+The origin of a marker space is the centre of the marker's physical bounds. The marker's front face lies in the x-y plane of the marker space:
+
+* the positive x-axis points towards the marker's right edge;
+
+* the positive y-axis points towards the marker's top edge; and
+
+* the positive z-axis is orthogonal to the marker plane and points towards the viewer when the marker's front face is visible.
+
+A marker space is used with {{XRFrame/getPose()}} to obtain the marker's pose relative to another [=XRSpace=]. The tracking system may provide either an actively tracked pose or an emulated pose, as indicated by the marker tracking state.
+A tracked marker may have an associated marker extent. A marker extent describes the physical width and height of the marker in metres, measured in the x-y plane of the marker space. Marker extent information is optional and may be estimated by the XR device.
+Marker extent information represents the physical bounds of the detected marker, not its pixel dimensions. Applications must not assume that an available extent is exact.
+
+<h3 class="heading settled" data-level="2.5" id="decoded-marker-data">
+  <span class="secno">2.5</span>
+  <span class="content">Decoded marker data</span>
+  <a class="self-link" href="#decoded-marker-data"></a>
+</h3>
+
+A tracked marker may have an associated decoded marker payload. The decoded marker payload is the data obtained by the XR device upon detection of the physical marker.
+The decoded marker payload is opaque to this module. It may represent text, a URL, a product identifier, a serial number, application-specific or custom data. This module does not define the semantics, safety, language, directionality or interpretation of decoded marker payloads.
+A tracked marker may still be spatially tracked even when decoded marker payload data is unavailable or empty.
+
+In this initial version, decoded marker payload data is exposed to applications through the `payloadString` attribute on `XRMarkerTrackingResult`. The `payloadString` attribute is `null` when decoded marker payload data is unavailable or cannot be represented as a string.
+
+Future versions of this module may expose a byte-oriented representation for decoded marker payloads.
+
+<h3 class="heading settled" data-level="2.6" id="marker-identity-and-session-scope">
+  <span class="secno">2.6</span>
+  <span class="content">Marker identity and session scope</span>
+  <a class="self-link" href="#marker-identity-and-session-scope"></a>
+</h3>
+
+A tracked marker has an associated marker identifier that identifies that tracked marker within the [=XRSession=] in which it was detected.
+A marker identifier is meaningful only for the duration of its XR session. User agents must not imply that a marker identifier represents persistent recognition of the same physical marker across XR sessions.
+If a marker stops being tracked and is later detected again, the user agent may associate it with the same tracked marker only when it can determine that it represents the same physical marker instance. Otherwise, the user agent may treat it as a new tracked marker.
+Applications must not use decoded marker payload data as a substitute for marker identity. Multiple physical markers may encode identical payloads.
+
+<h2 class="heading settled" data-level="3" id="webxr-device-api-integration">
+  <span class="secno">3.</span>
+  <span class="content">WebXR Device API Integration</span>
+  <a class="self-link" href="#webxr-device-api-integration"></a>
+</h2>
+
+This module expands the definitions of <dfn>XRSessionInit</dfn>, [=XRSession=], and <dfn>XRFrame</dfn>.
+
+<h3 class="heading settled" data-level="3.1" id="xr-session-init">
+  <span class="secno">3.1.</span>
+  <span class="content">XRSessionInit</span>
+  <a class="self-link" href="#xr-session-init"></a>
+</h3>
+
+<h4 class="heading settled" data-level="3.1.1" id="marker-tracking-feature-descriptor">
+  <span class="secno">3.1.1</span>
+  <span class="content">`marker-tracking` feature descriptor</span>
+  <a class="self-link" href="#marker-tracking-feature-descriptor"></a>
+</h4>
+
+This module introduces the string <dfn lt="marker-tracking"><code>marker-tracking</code></dfn> as a new valid [=feature descriptor=] for use in the `requiredFeatures` or `optionalFeatures` sequences when requesting an `immersive-ar` session.
+The [=marker-tracking=] feature descriptor applies only to `immersive-ar` sessions. A user agent MUST NOT grant the feature to `inline` or `immersive-vr` sessions. Marker tracking is restricted to `immersive-ar` sessions because it exposes the spatial relationship between supported physical markers and the user’s real environment.
+An XR device is [=capable of supporting=] the [=marker-tracking=] feature if it can detect, decode and spatially track supported QR code markers in the user's physical environment.
+
+<h4 class="heading settled" data-level="3.1.2" id="capability-and-configuration-options">
+  <span class="secno">3.1.2</span>
+  <span class="content">Capability and configuration options</span>
+  <a class="self-link" href="#capability-and-configuration-options"></a>
+</h4>
+
+This version of the module does not add any additional members to [=XRSessionInit=]. An application requests marker tracking by including the [=marker-tracking=] feature descriptor in `requiredFeatures` or `optionalFeatures`.
+Individual physical markers are discovered during the XR session. The application does not provide a list of marker targets when requesting the session.
+
+<h4 class="heading settled" data-level="3.1.3" id="set-up-marker-tracking-section">
+  <span class="secno">3.1.3</span>
+  <span class="content">Set up marker tracking</span>
+  <a class="self-link" href="#set-up-marker-tracking-section"></a>
+</h4>
+
+In order to <dfn export>set up marker tracking</dfn> for a {{XRSystem/requestSession()}} session request, add the following steps to [=initialize the session=] for the new [=XRSession=] |session|:
+
+1. Set |session|'s [=list of tracked markers=] to an empty list.
+
+2. If `marker-tracking` is not contained in |session|'s [=set of granted features=], abort these steps.
+
+3. Initialise any XR device or user agent resources required to detect, decode and track supported markers.
+
+<h3 class="heading settled" data-level="3.2" id="xr-session">
+  <span class="secno">3.2.</span>
+  <span class="content">XRSession</span>
+  <a class="self-link" href="#xr-session"></a>
+</h3>
+
+<h4 class="heading settled" data-level="3.2.1" id="marker-tracking-session-state">
+  <span class="secno">3.2.1</span>
+  <span class="content">Marker-tracking session state</span>
+  <a class="self-link" href="#marker-tracking-session-state"></a>
+</h4>
+
+Each [=XRSession=] has a <dfn>list of tracked markers</dfn>, which is a list of [=tracked markers=] detected during that session. The list is initially empty.
+A tracked marker is added to the list when the XR device first reports a supported physical marker. A tracked marker remains associated with the session while the user agent needs to report its tracking state or pose.
+A user agent MAY stop retaining a tracked marker once it is no longer tracked and no longer needed to report an emulated pose. If the same physical marker is detected again, the user agent MAY associate it with the existing tracked marker only when it can determine that it represents the same physical marker instance.
+
+<h4 class="heading settled" data-level="3.2.2" id="capability-reporting">
+  <span class="secno">3.2.2</span>
+  <span class="content">Capability reporting</span>
+  <a class="self-link" href="#capability-reporting"></a>
+</h4>
+
+This version of the module does not define a Web exposed capability-reporting method or attribute on [=XRSession=].
+
+<h3 class="heading settled" data-level="3.3" id="xr-frame">
+  <span class="secno">3.3.</span>
+  <span class="content">XRFrame</span>
+  <a class="self-link" href="#xr-frame"></a>
+</h3>
+
+<h4 class="heading settled" data-level="3.3.1" id="update-tracked-markers-section">
+  <span class="secno">3.3.1</span>
+  <span class="content">Update tracked markers</span>
+  <a class="self-link" href="#update-tracked-markers-section"></a>
+</h4>
+
+When marker tracking is active, add the [=update tracked markers=] algorithm to the [=XRSession=]'s [=list of frame updates=].
+In order to <dfn>update tracked markers</dfn> for an [=XRFrame=] |frame| in an [=XRSession=] |session|, the user agent MUST run the following steps:
+
+1. Let |observations| be the set of supported physical marker observations reported by the XR device for |frame|.
+
+2. For each [=tracked marker=] |marker| in |session|'s [=list of tracked markers=], set |marker|'s [=marker tracking state=] to `"untracked"`.
+
+3. For each |observation| in |observations|:
+
+   1. Let |marker| be the [=tracked marker=] associated with |observation|, if one exists.
+
+   2. If |marker| does not exist:
+
+      1. Create a new [=tracked marker=] |marker|.
+
+      2. Set |marker|'s [=marker symbology=] from |observation|.
+
+      3. Assign |marker| a [=marker identifier=].
+
+      4. Set |marker|'s [=marker space=] to a device [=XRSpace=] associated with |marker|.
+
+      5. Append |marker| to |session|'s [=list of tracked markers=].
+
+   3. Set |marker|'s [=marker tracking state=] to `"tracked"` if the XR device is actively tracking the physical marker. Otherwise, set |marker|'s [=marker tracking state=] to `"emulated"` if the XR device provides a pose derived from a previous observation.
+
+   4. Update |marker|'s [=marker space=] based on the XR device's estimate of the marker's pose.
+
+   5. Update |marker|'s [=decoded marker payload=] and [=marker extent=] from |observation|, where available.
+
+<h4 class="heading settled" data-level="3.3.2" id="xr-marker-tracking-state">
+  <span class="secno">3.3.2</span>
+  <span class="content">XRMarkerTrackingState</span>
+  <a class="self-link" href="#xr-marker-tracking-state"></a>
+</h4>
+
+The `XRMarkerTrackingState` enum represents a tracked marker's [=marker tracking state=].
+
+<pre class="def highlight idl">
+enum XRMarkerTrackingState {
+    "untracked",
+    "tracked",
+    "emulated",
+};
+</pre>
+
+The `XRMarkerTrackingState` values correspond to the [=marker tracking state=] values defined in the [[#marker-tracking-discovery-model|Discovery Model]].
+The `"untracked"` value is used by the algorithms in this module, but marker-tracking results only include markers whose tracking state is `"tracked"` or `"emulated"`.
+
+<h4 class="heading settled" data-level="3.3.3" id="xr-marker-extent">
+  <span class="secno">3.3.3</span>
+  <span class="content">XRMarkerExtent</span>
+  <a class="self-link" href="#xr-marker-extent"></a>
+</h4>
+
+An `XRMarkerExtent` represents the physical dimensions of a detected marker in meters.
+
+<pre class="idl">
+[SecureContext, Exposed=Window]
+interface XRMarkerExtent {
+    readonly attribute float widthInMeters;
+    readonly attribute float heightInMeters;
+};
+</pre>
+
+The `widthInMeters` attribute represents the physical width of the marker in meters, measured along the x-axis of the marker space.
+
+The `heightInMeters` attribute represents the physical height of the marker in meters, measured along the y-axis of the marker space.
+
+An `XRMarkerExtent` represents the physical bounds of the detected marker, not its pixel dimensions. Applications must not assume that the reported dimensions are exact.
+
+<h4 class="heading settled" data-level="3.3.4" id="xr-marker-tracking-result">
+  <span class="secno">3.3.4</span>
+  <span class="content">XRMarkerTrackingResult</span>
+  <a class="self-link" href="#xr-marker-tracking-result"></a>
+</h4>
+
+An `XRMarkerTrackingResult` represents the current tracking result for a [=tracked marker=] during an [=XRFrame=].
+
+<pre class="idl">
+[SecureContext, Exposed=Window]
+interface XRMarkerTrackingResult {
+    [SameObject] readonly attribute XRSpace markerSpace;
+    readonly attribute XRMarkerTrackingState trackingState;
+    readonly attribute DOMString? payloadString;
+    readonly attribute XRMarkerExtent? extent;
+};
+</pre>
+
+The `markerSpace` attribute is the [=marker space=] associated with the tracked marker for the current frame.
+
+The `trackingState` attribute is the [=marker tracking state=] associated with the tracked marker for the current frame.
+
+The `payloadString` attribute is the string representation of the tracked marker's [=decoded marker payload=]. It is `null` if decoded marker payload data is unavailable or cannot be represented as a string.
+
+The `extent` attribute is an `XRMarkerExtent` representing the tracked marker's [=marker extent=]. It is `null` if marker extent information is unavailable.
+
+The initial version of this module does not expose marker symbology or marker identity on `XRMarkerTrackingResult`. Future versions may add attributes for marker symbology, byte-oriented payload data, more detailed marker geometry or session-scoped marker identity if those are needed.
+
+<h4 class="heading settled" data-level="3.3.5" id="obtain-marker-tracking-results-section">
+  <span class="secno">3.3.5</span>
+  <span class="content">Obtain marker-tracking results</span>
+  <a class="self-link" href="#obtain-marker-tracking-results-section"></a>
+</h4>
+
+The [=XRFrame=] interface is expanded with a `getMarkerTrackingResults()` method.
+
+<pre class="idl">
+partial interface XRFrame {
+    FrozenArray&lt;XRMarkerTrackingResult> getMarkerTrackingResults();
+};
+</pre>
+
+In order to <dfn export>obtain marker-tracking results</dfn> for an [=XRFrame=] |frame|, the user agent MUST run the following steps:
+
+1. Let |session| be |frame|'s `session` object.
+
+2. Let |results| be an empty list.
+
+3. For each [=tracked marker=] |marker| in |session|'s [=list of tracked markers=]:
+    1. If |marker|'s [=marker tracking state=] is `"untracked"`, continue to the next entry.
+
+    2. Let |result| be a new `XRMarkerTrackingResult`.
+
+    3. Set |result|'s `markerSpace` to |marker|'s [=marker space=].
+
+    4. Set |result|'s `trackingState` to |marker|'s [=marker tracking state=].
+
+    5. If |marker|'s [=decoded marker payload=] is available and can be represented as a string, set |result|'s `payloadString` to that string. Otherwise, set |result|'s `payloadString` to `null`.
+
+    6. If |marker|'s [=marker extent=] is available, set |result|'s `extent` to a new `XRMarkerExtent` whose `widthInMeters` and `heightInMeters` are the width and height of |marker|'s [=marker extent=]. Otherwise, set |result|'s `extent` to `null`.
+
+    7. Append |result| to |results|.
+
+4. Return a new `FrozenArray` containing the elements of |results|.
+
+Marker-tracking results only contain information about markers whose [=marker tracking state=] is `"tracked"` or `"emulated"`.
+A marker-tracking result is specific to the frame in which it is obtained. Applications can use a result's `markerSpace` with {{XRFrame/getPose()}} to obtain the marker's pose relative to another [=XRSpace=].
+
+<h2 class="heading settled" data-level="4" id="comfort-and-presentation-considerations">
+  <span class="secno">4.</span>
+  <span class="content">Comfort and Presentation Considerations</span>
+  <a class="self-link" href="#comfort-and-presentation-considerations"></a>
+</h2>
+
+<section class="non-normative">
+Marker tracking is not intended to provide frame-perfect object tracking. Applications SHOULD account for tracking-state changes, pose updates and possible discontinuities when attaching virtual content to a marker.
+In particular, applications SHOULD avoid presenting emulated marker poses as though they were actively tracked poses for moving physical markers.
+Applications should also avoid sudden or disorientating changes to world-locked content when a marker is newly detected, lost, re-detected or corrected.
+</section>
+
+<h2 class="heading settled" data-level="5" id="security-and-privacy-considerations">
+  <span class="secno">5.</span>
+  <span class="content">Security and Privacy Considerations</span>
+  <a class="self-link" href="#security-and-privacy-considerations"></a>
+</h2>
+
+<h3 class="heading settled" data-level="5.1" id="sensitive-marker-information">
+  <span class="secno">5.1</span>
+  <span class="content">Sensitive marker information</span>
+  <a class="self-link" href="#sensitive-marker-information"></a>
+</h3>
+
+Marker tracking exposes information derived from the user’s physical environment. Sensitive marker information includes, but is not limited to:
+
+* Presence of supported physical markers in the user’s environment;
+
+* A marker’s spatial pose or approximate physical location;
+
+* Marker extent, size or other geometry where available;
+
+* Decoded marker payload data, such as URLs, identifiers, serial numbers or application-specific data; and
+
+* Changes in marker tracking state over time.
+
+Decoded marker payloads are data observed from markers in the user’s physical environment. They may themselves be sensitive, regardless of whether they describe the user's environment or not. For example, a marker may encode a product identifier, location identifier, account related value, URL or other application specific content.
+Marker payloads MUST be treated as untrusted input. User agents MUST NOT automatically navigate to, make a network request to, or otherwise act on decoded marker data solely as part of marker detection or tracking. Applications are responsible for safely handling decoded payload data, particularly before navigating, making network requests or using it in security-sensitive contexts.
+Marker tracking provides a narrower privacy surface than raw camera access because it does not expose camera frames to the application. This does not make marker tracking non-sensitive: marker presence, pose and decoded payload data can still reveal information about the user and their surroundings.
+
+<h3 class="heading settled" data-level="5.2" id="feature-gating-and-user-awareness">
+  <span class="secno">5.2</span>
+  <span class="content">Feature gating and user awareness</span>
+  <a class="self-link" href="#feature-gating-and-user-awareness"></a>
+</h3>
+
+Marker tracking is a sensitive WebXR capability and MUST be requested using the [=marker-tracking=] feature descriptor.
+This version of the module restricts marker tracking to `immersive-ar` sessions. Because marker tracking is available only to immersive-ar sessions, it operates within the WebXR Device API’s existing spatial-tracking permission and user-intent framework, including the `xr-spatial-tracking` Permissions Policy.
+This module must additionally define whether the marker-tracking feature requires explicit user consent, whether it needs a separate policy-controlled feature, and whether decoded marker payloads require different treatment from pose-only marker tracking.
+A user agent MUST ensure that there is a clear signal of user intent before enabling marker tracking. The mechanism used to establish user intent, including any permission prompt or other user-facing explanation, is left to the user agent.
+The user agent SHOULD make it clear that enabling marker tracking may allow the application to receive information about supported physical markers in the user’s environment, including decoded marker data where exposed by this module.
+This version of the module treats spatial marker information and decoded marker data as part of the same `marker-tracking` capability. A future version may define more granular controls if there is an interoperable need to distinguish pose-only marker tracking from access to decoded marker data.
+
+<h3 class="heading settled" data-level="5.3" id="limiting-unnecessary-environmental-disclosure">
+  <span class="secno">5.3</span>
+  <span class="content">Limiting unnecessary environmental disclosure</span>
+  <a class="self-link" href="#limiting-unnecessary-environmental-disclosure"></a>
+</h3>
+
+User agents SHOULD limit unnecessary disclosure of marker information. For example, a user agent may wait until a marker is prominently visible in the user’s central view before first reporting it to an application. Once the marker has been detected, the user agent may continue to report its pose when it becomes partially occluded or less prominent, subject to the marker’s tracking state.
+For initial detection, a user agent SHOULD consider whether the marker is sufficiently prominent in the user’s central field of view or camera view to indicate that the user is intentionally scanning it. User agents SHOULD avoid initiating marker tracking for markers that are only briefly visible, distant, too small to be clearly noticed or visible only in peripheral vision.
+The detailed criteria used for initial detection are implementation-defined and may vary according to the device, tracking system and marker symbology.
+User agents MAY limit the number of simultaneously reported markers, reduce the precision of marker geometry, or throttle marker-result updates where necessary to mitigate privacy or fingerprinting risks. Such mitigations MUST NOT introduce tracking behaviour that is likely to cause user discomfort.
+
+<h3 class="heading settled" data-level="5.4" id="session-scope-and-persistence">
+  <span class="secno">5.4</span>
+  <span class="content">Session scope and persistence</span>
+  <a class="self-link" href="#session-scope-and-persistence"></a>
+</h3>
+
+Marker identifiers, tracking state, marker spaces and decoded marker data are scoped to the `XRSession` in which they are reported.
+This module does not define a mechanism for correlating a marker observed in one XR session with a marker observed in a later XR session, unless such behaviour is explicitly defined by a future version of this module.
+When an XR session ends, the user agent MUST stop exposing marker-tracking results for that session. This does not prevent an application from explicitly storing decoded marker data using existing Web Platform storage mechanisms, subject to the normal privacy and security expectations of those mechanisms.
+
+<h2 class="heading settled" data-level="6" id="accessibility-considerations">
+  <span class="secno">6.</span>
+  <span class="content">Accessibility Considerations</span>
+  <a class="self-link" href="#accessibility-considerations"></a>
+</h2>
+
+<section class="non-normative">
+Marker tracking can support accessible immersive experiences. For example, a detected marker may help an application identify a physical object, retrieve accessible information about it or place virtual guidance relative to it.
+This module does not define accessibility requirements for QR codes, barcodes, GS1 identifiers or other marker symbologies. It does not alter the existing requirements, guidance or deployment practices associated with those machine-readable formats and specifications. Instead, it adds spatial detection and tracking capabilities around supported markers within an XR session.
+Marker scanning can create barriers where it is the only way to access information or complete an action. Applications should provide an equivalent non-marker path where appropriate, particularly for critical actions and for users who may have difficulty locating, seeing, aiming at or physically approaching a marker.
+When an application or content author controls the presentation of a physical marker, it should:
+
+* Provide readable text or other accessible instructions explaining the marker’s purpose and how to use it.
+
+* Avoid relying on colour alone in the instructions or surrounding visual cues used to identify, distinguish or explain a marker.
+
+* Use sufficient contrast between the marker and its background;
+
+* Place the marker where it can reasonably be seen, reached or approached by the intended users;
+
+* Ensure that the marker is large enough to be detected at its intended viewing distance;
+
+* Follow the relevant presentation and deployment guidance for supported marker symbologies; and
+
+* Avoid making marker scanning the only available path for important information, authentication or task completion.
+
+Applications should expose decoded marker information, marker status and related actions through accessible user-interface mechanisms, including HTML UI where possible. For example, an application that displays a virtual overlay after detecting a marker should also provide an accessible textual status or control through its HTML interface.
+</section>
+
+<h2 class="heading settled" data-level="7" id="internationalization-considerations">
+  <span class="secno">7.</span>
+  <span class="content">Internationalization Considerations</span>
+  <a class="self-link" href="#internationalization-considerations"></a>
+</h2>
+
+<section class="non-normative">
+This module does not define QR code or other barcode symbologies, GS1 identifiers or GS1 Digital Link syntax or the application specific semantics of decoded payload data.
+Different marker symbologies and application ecosystems can define their own encoding and payload rules. For example, a GS1 Digital Link payload can associate a machine-readable product identifier with online information. This module does not interpret or modify those rules; it only provides a potential mechanism for associating supported marker data with an XR spatial pose.
+After decoding according to the applicable marker symbology, user agents should return textual payload data without additional case conversion, Unicode normalisation, locale-dependent transformation or inferred language or text direction.
+The initial version exposes decoded marker data through `payloadString`. The normative payload-processing algorithm still needs to define character encoding, error handling behaviour, treatment of non-text payloads and whether future byte-oriented payload access is needed.
+QR codes are the initial focus of this module because they provide a practical cross-platform starting point. This does not imply that QR codes are the only globally relevant marker format. Future versions may consider other barcode symbologies or marker families where platform support and use cases justify them.
+</section>
+
+<h2 class="heading settled" data-level="8" id="acknowledgements">
+  <span class="secno">8.</span>
+  <span class="content">Acknowledgements</span>
+  <a class="self-link" href="#acknowledgements"></a>
+</h2>
+<!--
+  [TBD]
+-->
+</main>
