@@ -104,7 +104,7 @@ The [="untracked"=] state is an internal tracking state. The marker tracking res
   <a class="self-link" href="#marker-space-and-geometry"></a>
 </h3>
 
-A tracked marker has an associated marker space, which is a device <dfn>XRSpace</dfn> representing the tracking system's 6DoF pose of the marker in the user's environment.
+A tracked marker has an associated <dfn>marker space</dfn>, which is a device {{XRSpace}} representing the tracking system's 6DoF pose of the marker in the user's environment.
 The origin of a marker space is the centre of the marker's physical bounds. The marker's front face lies in the x-y plane of the marker space:
 
 * the positive x-axis points towards the marker's right edge;
