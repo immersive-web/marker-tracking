@@ -137,7 +137,7 @@ Future versions of this module may expose a byte-oriented representation for dec
   <a class="self-link" href="#marker-identity-and-session-scope"></a>
 </h3>
 
-A tracked marker has an associated marker identifier that identifies that tracked marker within the [=XRSession=] in which it was detected.
+A tracked marker has an associated <dfn>marker identifier</dfn> that identifies that tracked marker within the [=XRSession=] in which it was detected.
 A marker identifier is meaningful only for the duration of its XR session. User agents must not imply that a marker identifier represents persistent recognition of the same physical marker across XR sessions.
 If a marker stops being tracked and is later detected again, the user agent may associate it with the same tracked marker only when it can determine that it represents the same physical marker instance. Otherwise, the user agent may treat it as a new tracked marker.
 Applications must not use decoded marker payload data as a substitute for marker identity. Multiple physical markers may encode identical payloads.
