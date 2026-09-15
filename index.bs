@@ -123,7 +123,7 @@ Marker extent information represents the physical bounds of the detected marker,
   <a class="self-link" href="#decoded-marker-data"></a>
 </h3>
 
-A tracked marker may have an associated decoded marker payload. The decoded marker payload is the data obtained by the XR device upon detection of the physical marker.
+A tracked marker may have an associated <dfn>decoded marker payload</dfn>. The [=decoded marker payload=] is the data obtained by the XR device upon detection of the physical marker.
 The decoded marker payload is opaque to this module. It may represent text, a URL, a product identifier, a serial number, application-specific or custom data. This module does not define the semantics, safety, language, directionality or interpretation of decoded marker payloads.
 A tracked marker may still be spatially tracked even when decoded marker payload data is unavailable or empty.
 
