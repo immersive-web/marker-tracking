@@ -52,8 +52,12 @@ Marker detection, decoding and tracking are performed by the XR device and user 
   <a class="self-link" href="#marker"></a>
 </h3>
 
-A marker is a physical, machine-readable visual target of a supported <dfn>marker symbology</dfn>.
+A <dfn>marker symbology</dfn> identifies the machine-readable marker format used by a physical marker. QR Code is the initial marker symbology supported by this version of the module.
+
+A marker is a physical, machine-readable visual target of a supported [=marker symbology=].
+
 A <dfn export lt="tracked marker|tracked markers">tracked marker</dfn> corresponds to the information used by the XR device to detect, decode and spatially track one physical instance of a marker during an <dfn>XRSession</dfn>.
+
 A tracked marker represents a physical instance, rather than only its decoded data. Two physically distinct markers that encode identical data may be represented as distinct tracked markers when the XR device can distinguish them.
 
 Each tracked marker has an associated:
@@ -78,7 +82,7 @@ A marker identifier is an internal identifier used by the user agent to associat
   <a class="self-link" href="#qr-code-markers"></a>
 </h3>
 
-This first version of the module defines QR codes as its initial supported marker family. A QR code is a two-dimensional matrix barcode that can store various types of data. A user agent determines whether a physical QR code is supported and suitable for detection and tracking.
+This first version of the module defines QR codes as its initial supported marker symbology. A QR code is a two-dimensional matrix barcode that can store various types of data. A user agent determines whether a physical QR code is supported and suitable for detection and tracking.
 This module defines an initial Web-facing representation for decoded QR code payload data through the `payloadString` attribute on `XRMarkerTrackingResult`. That representation specifies how decoded text is exposed to Web applications. Future versions may expose byte-oriented payload data. It does not define the application-specific meaning, safety, language, directionality or interpretation of that data.
 A user agent may be unable to detect or track QR codes whose physical presentation is unsuitable for reliable detection, including codes with insufficient contrast, visual modifications, embedded imagery, altered modules or other customisation. Non-normative author guidance for marker presentation may be provided separately.
 Future versions of this module may define and support additional marker symbologies. Such additions must not change the behaviour of QR code markers defined by this version.
