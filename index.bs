@@ -72,7 +72,9 @@ Each [=tracked marker=] has an associated:
 
 5. [=marker extent=], where available; and
 
-6. [=marker identifier=].
+6. [=marker identifier=]; and
+
+7. `XRMarker` object.
 
 <h3 class="heading settled" data-level="2.2" id="qr-code-markers">
   <span class="secno">2.2</span>
@@ -150,8 +152,11 @@ Future versions of this module may expose a byte-oriented representation for dec
 </h3>
 
 A [=tracked marker=] has an associated <dfn>marker identifier</dfn>. A [=marker identifier=] is an internal identifier used by the user agent to associtate observations of a tracked marker during the [=XRSession=] in which it was detected.
-A [=marker identifier=] is meaningful only for the duration of its XR session. User agents must not imply that a marker identifier represents persistent recognition of the same physical marker across XR sessions.
-If a marker stops being tracked and is later detected again, the user agent may associate it with the same [=tracked marker=] only when it can determine that it represents the same physical marker instance. Otherwise, the user agent may treat it as a new tracked marker.
+The [=marker identifier=] is not exposed to applications.
+Each [=tracked marker=] has an associated `XRMarker` object. For as long as a [=tracked marker=] remains associated with an [=XRSession=], the user agent MUST use the same `XRMarker` object to represent that [=tracked marker=].
+Applications can therefore use `XRMarker` object identity to correlate observations of the same [=tracked marker=] across XR frames, including comparing objects for equality or using an `XRMarker` as a map key.
+Marker identity is scoped to the [=XRSession=]. User agents must not imply that an `XRMarker` object or internal [=marker identifier=] represents presistent recognition of the same physical marker across XR sessions.
+If a marker stops being tracked and is later detected again, the user agent may associate it with the same [=tracked marker=] only when it can determine that it represents the same physical marker instance. Otherwise, the user agent may treat it as a new [=tracked marker=] with a new `XRMarker` object.
 Applications must not use [=decoded marker payload=] data as a substitute for marker identity. Multiple physical markers may encode identical payloads.
 
 <h2 class="heading settled" data-level="3" id="webxr-device-api-integration">
@@ -316,13 +321,14 @@ An `XRMarkerTrackingResult` represents the current tracking result for a [=track
 
 <pre class="idl">
 [SecureContext, Exposed=Window]
-interface XRMarkerTrackingResult {
+interface XRMarker {
     [SameObject] readonly attribute XRSpace markerSpace;
-    readonly attribute XRMarkerTrackingState trackingState;
     readonly attribute DOMString? payloadString;
     readonly attribute XRMarkerExtent? extent;
 };
 </pre>
+
+An `XRMarker` represent one physical marker tracked by the XR device during an [=XRSession=]. For as long as the corresponding [=tracked marker=] remains associated with the session, the same `XRMarker` object MUST be used to represent it.
 
 The `markerSpace` attribute is the [=marker space=] associated with the [=tracked marker=] for the current frame.
 
@@ -331,6 +337,20 @@ The `trackingState` attribute is the [=marker tracking state=] associated with t
 The `payloadString` attribute is the string representation of the tracked marker's [=decoded marker payload=]. It is `null` if [=decoded marker payload=] data is unavailable or cannot be represented as a string.
 
 The `extent` attribute is an `XRMarkerExtent` representing the tracked marker's [=marker extent=]. It is `null` if [=marker extent=] information is unavailable.
+
+<pre class="idl">
+[SecureContext, Exposed=Window]
+interface XRMarkerTrackingResult {
+    [SameObject] readonly attribute XRMarker marker;
+    readonly attribute XRMarkerTrackingState trackingState;
+};
+</pre>
+
+An `XRMarkerTrackingResult` represents the tracking result for an `XRMarker` during an [=XRFrame=].
+
+The `marker` attribute identifies the `XRMarker` associated with this result. Results for the same [=tracked marker=] across multiple XR frames MUST reference the same `XRMarker` object while that marker remains associated with the [=XRSession=].
+
+The `trackingState` attribute is the [=marker tracking state=] associated with the [=tracked marker=] for the current frame.
 
 The initial version of this module does not expose marker symbology or marker identity on `XRMarkerTrackingResult`. Future versions may add attributes for marker symbology, byte-oriented payload data, more detailed marker geometry or session-scoped marker identity if those are needed.
 
