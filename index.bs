@@ -263,7 +263,13 @@ In order to <dfn>update tracked markers</dfn> for an [=XRFrame=] |frame| in an [
 
       4. Set |marker|'s [=marker space=] to a device [=XRSpace=] associated with |marker|.
 
-      5. Append |marker| to |session|'s [=list of tracked markers=].
+      5. Create a new `XRMarker` |xrMarker|.
+
+      6. Set |xrMarker|'s `markerSpace` to |marker|'s [=marker space=].
+
+      7. Set |marker|'s associated `XRMarker` object to |xrMarker|.
+
+      8. Append |marker| to |session|'s [=list of tracked markers=].
 
    3. Set |marker|'s [=marker tracking state=] to `"tracked"` if the XR device is actively tracking the physical marker. Otherwise, set |marker|'s [=marker tracking state=] to `"emulated"` if the XR device provides a pose derived from a previous observation.
 
@@ -379,7 +385,7 @@ In order to <dfn export>obtain marker-tracking results</dfn> for an [=XRFrame=] 
 
     2. Let |result| be a new `XRMarkerTrackingResult`.
 
-    3. Set |result|'s `markerSpace` to |marker|'s [=marker space=].
+    3. Set |result|'s `marker` to |marker|'s associated `XRMarker` object.
 
     4. Set |result|'s `trackingState` to |marker|'s [=marker tracking state=].
 
@@ -392,7 +398,9 @@ In order to <dfn export>obtain marker-tracking results</dfn> for an [=XRFrame=] 
 4. Return a new `FrozenArray` containing the elements of |results|.
 
 Marker-tracking results only contain information about markers whose [=marker tracking state=] is `"tracked"` or `"emulated"`.
-A marker-tracking result is specific to the frame in which it is obtained. Applications can use a result's `markerSpace` with {{XRFrame/getPose()}} to obtain the marker's pose relative to another [=XRSpace=].
+A marker-tracking result is specific to the frame in which it is obtained. Applications MUST NOT rely on `XRMarkerTrackingResult` object identity to correlate results across XR frames.
+Applications can instead use the result's `marker` attribute to identify the [=tracked marker=]. Results for the same [=tracked marker=] reference the same `XRMarker` object while that marker remains associated with the [=XRSession=].
+Applications can use `result.marker.markerSpace` with {{XRFrame/getPose()}} to obtain the marker's pose relative to another [=XRSpace=].
 
 <h2 class="heading settled" data-level="4" id="comfort-and-presentation-considerations">
   <span class="secno">4.</span>
