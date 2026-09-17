@@ -95,10 +95,20 @@ A [=tracked marker=] has an associated <dfn>marker tracking state</dfn>. The [=m
 The possible marker tracking states are:
 <dl> <dt><dfn><code>"untracked"</code></dfn></dt> <dd> The XR device has no current tracking information for the marker. </dd>
 <dt><dfn><code>"tracked"</code></dfn></dt> <dd> The marker is currently being actively tracked by the XR device. The marker is at least partially visible to a tracking camera or otherwise actively observed by the tracking system. </dd>
-<dt><dfn><code>"emulated"</code></dfn></dt> <dd> The marker was previously tracked during the current XR session, but its current pose is based on a previous observation rather than active tracking. </dd> </dl>
+<dt><dfn><code>"emulated"</code></dfn></dt> <dd> The marker was previously tracked during the current XR session, but its current pose is based on a previous observation rather than active observation of the physical marker. </dd> </dl>
 
-An [="emulated"=] marker pose may be useful for a marker that is expected to remain stationary. Applications should not rely on an emulated pose for a marker that may be moving.
-The [="untracked"=] state is an internal tracking state. The marker tracking results defined by this module only report markers whose state is [="tracked"=] or [="emulated"=].
+The [="untracked"=] state is an internal tracking state and is not exposed through `XRMarkerTrackingResult`.
+
+An [="emulated"=] result indicates that the application should not assume that the reported pose still corresponds to the marker's current physical location. For a marker that is expected to remain stationary, such as one attached to a wall or fixed sign, the previous pose may remain useful while active observation is temporarily unavailable.
+
+For a marker that may have moved since it was last observed, the emulated pose may be stale. Applications that require accurate physical alignment should consider hiding, fading, de-emphasising or otherwise indicating uncertainty in marker-relative content until the marker returns to the [="tracked"=] state.
+
+When active tracking resumes, applications should account for the possibility that the marker pose may be corrected to a different position or orientation.
+
+<div class="note>
+The [=marker tracking state=] describes whether the physical marker itself is currently being actively observed by the marker-tracking system.
+This is distinct from {{XRPose/emulatedPosition}}, which describes whether the computation of an {{XRPose}} between two {{XRSpace}} objects relies on an emulated position. An application's pose query may therefore have emulation characteristics that are separate from whether the marker itself is actively being observed.
+</div>
 
 <h3 class="heading settled" data-level="2.4" id="marker-space-and-geometry">
   <span class="secno">2.4</span>
@@ -266,14 +276,13 @@ The `XRMarkerTrackingState` enum represents a tracked marker's [=marker tracking
 
 <pre class="def highlight idl">
 enum XRMarkerTrackingState {
-    "untracked",
     "tracked",
     "emulated",
 };
 </pre>
 
 The `XRMarkerTrackingState` values correspond to the [=marker tracking state=] values defined in the [[#marker-tracking-discovery-model|Discovery Model]].
-The `"untracked"` value is used by the algorithms in this module, but marker-tracking results only include markers whose tracking state is `"tracked"` or `"emulated"`.
+The [="untracked"=] [=marker tracking state=] is an internal state used by the algorithms in this module and is not exposed through `XRMarkerTrackingState`. Marker-tracking results are returned only for markers whose state is `"tracked"` or `"emulated"`.
 
 <h4 class="heading settled" data-level="3.3.3" id="xr-marker-extent">
   <span class="secno">3.3.3</span>
@@ -373,8 +382,10 @@ A marker-tracking result is specific to the frame in which it is obtained. Appli
 
 <section class="non-normative">
 Marker tracking is not intended to provide frame-perfect object tracking. Applications SHOULD account for tracking-state changes, pose updates and possible discontinuities when attaching virtual content to a marker.
-In particular, applications SHOULD avoid presenting emulated marker poses as though they were actively tracked poses for moving physical markers.
-Applications should also avoid sudden or disorientating changes to world-locked content when a marker is newly detected, lost, re-detected or corrected.
+In particular, when a marker result is `"emulated"`, applications should consider whether the physical marker may have moved since it was last actively observed.
+For markers expected to remain stationary, continuing to present marker-relative content using the emulated pose may be appropriate.
+For markers that may move, applications should avoid presenting marker-relative content as though its physical alignment were still known. Depending on the experience, applications may hide, fade or otherwise indicate uncertainty in that content until active tracking resumes.
+Applications should also account for a possible pose correction when a marker transitions from `"emulated"` back to `"tracked"`.
 </section>
 
 <h2 class="heading settled" data-level="5" id="security-and-privacy-considerations">
