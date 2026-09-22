@@ -107,7 +107,7 @@ For a marker that may have moved since it was last observed, the emulated pose m
 
 When active tracking resumes, applications should account for the possibility that the marker pose may be corrected to a different position or orientation.
 
-<div class="note>
+<div class="note">
 The [=marker tracking state=] describes whether the physical marker itself is currently being actively observed by the marker-tracking system.
 This is distinct from {{XRPose/emulatedPosition}}, which describes whether the computation of an {{XRPose}} between two {{XRSpace}} objects relies on an emulated position. An application's pose query may therefore have emulation characteristics that are separate from whether the marker itself is actively being observed.
 </div>
