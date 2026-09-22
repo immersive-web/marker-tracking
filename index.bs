@@ -26,8 +26,6 @@ spec: webxr; type: dfn; for: XRSession; text: set of granted features
 spec: webxr; type: dfn; text: capable of supporting
 </pre>
 
-<main>
-
 <h2 class="heading settled" data-level="1" id="intro">
   <span class="secno">1.</span>
   <span class="content">Introduction</span>
