@@ -527,4 +527,3 @@ QR codes are the initial focus of this module because they provide a practical c
 <!--
   [TBD]
 -->
-</main>
