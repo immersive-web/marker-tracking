@@ -16,9 +16,6 @@ Abstract: The WebXR Marker Tracking Module expands the WebXR Device API with fun
 
 <pre class="link-defaults">
 spec: webxr; type: dfn; text: feature descriptor
-spec: webxr; type: dfn; text: XRSession
-spec: webxr; type: dfn; text: XRFrame
-spec: webxr; type: dfn; text: XRSpace
 spec: webxr; type: dfn; text: immersive session
 spec: webxr; type: dfn; text: initialize the session
 spec: webxr; type: dfn; text: list of frame updates
@@ -45,7 +42,7 @@ A <dfn>marker symbology</dfn> identifies the machine-readable marker format used
 
 A marker is a physical, machine-readable visual target of a supported [=marker symbology=].
 
-A <dfn export lt="tracked marker|tracked markers">tracked marker</dfn> corresponds to the information used by the XR device to detect, decode and spatially track one physical instance of a marker during an <dfn>XRSession</dfn>.
+A <dfn export lt="tracked marker|tracked markers">tracked marker</dfn> corresponds to the information used by the XR device to detect, decode and spatially track one physical instance of a marker during an {{XRSession}}.
 
 A [=tracked marker=] represents a physical instance, rather than only its decoded data. Two physically distinct markers that encode identical data may be represented as distinct tracked markers when the XR device can distinguish them.
 
@@ -63,13 +60,13 @@ Each [=tracked marker=] has an associated:
 
 6. [=marker identifier=]; and
 
-7. `XRMarker` object.
+7. {{XRMarker}} object.
 
 QR code markers {#qr-code-markers}
 -------------
 
 This first version of the module defines QR codes as its initial supported [=marker symbology=]. A QR code is a two-dimensional matrix barcode that can store various types of data. A user agent determines whether a physical QR code is supported and suitable for detection and tracking.
-This module defines an initial Web-facing representation for decoded QR code payload data through the `payloadString` attribute on `XRMarkerTrackingResult`. That representation specifies how decoded text is exposed to Web applications. Future versions may expose byte-oriented payload data. It does not define the application-specific meaning, safety, language, directionality or interpretation of that data.
+This module defines an initial Web-facing representation for decoded QR code payload data through the {{XRMarker/payloadString}} attribute on {{XRMarker}}. That representation specifies how decoded text is exposed to Web applications. Future versions may expose byte-oriented payload data. It does not define the application-specific meaning, safety, language, directionality or interpretation of that data.
 A user agent may be unable to detect or track QR codes whose physical presentation is unsuitable for reliable detection, including codes with insufficient contrast, visual modifications, embedded imagery, altered modules or other customisation. Non-normative author guidance for marker presentation may be provided separately.
 Future versions of this module may define and support additional marker symbologies. Such additions must not change the behaviour of QR code markers defined by this version.
 
@@ -82,7 +79,7 @@ The possible marker tracking states are:
 <dt><dfn><code>"tracked"</code></dfn></dt> <dd> The marker is currently being actively tracked by the XR device. The marker is at least partially visible to a tracking camera or otherwise actively observed by the tracking system. </dd>
 <dt><dfn><code>"emulated"</code></dfn></dt> <dd> The marker was previously tracked during the current XR session, but its current pose is based on a previous observation rather than active observation of the physical marker. </dd> </dl>
 
-The [="untracked"=] state is an internal tracking state and is not exposed through `XRMarkerTrackingResult`.
+The [="untracked"=] state is an internal tracking state and is not exposed through {{XRMarkerTrackingResult}}.
 
 An [="emulated"=] result indicates that the application should not assume that the reported pose still corresponds to the marker's current physical location. For a marker that is expected to remain stationary, such as one attached to a wall or fixed sign, the previous pose may remain useful while active observation is temporarily unavailable.
 
@@ -107,7 +104,7 @@ The origin of a [=marker space=] is the centre of the marker's physical bounds. 
 
 * the positive z-axis is orthogonal to the marker plane and points towards the viewer when the marker's front face is visible.
 
-A [=marker space=] is used with {{XRFrame/getPose()}} to obtain the marker's pose relative to another [=XRSpace=]. The tracking system may provide either an actively tracked pose or an emulated pose, as indicated by the marker tracking state.
+A [=marker space=] is used with {{XRFrame/getPose()}} to obtain the marker's pose relative to another {{XRSpace}}. The tracking system may provide either an actively tracked pose or an emulated pose, as indicated by the marker tracking state.
 A [=tracked marker=] may have an associated <dfn>marker extent</dfn>. A [=marker extent=] describes the physical width and height of the marker in metres, measured in the x-y plane of the [=marker space=]. The [=marker extent=] information is optional and may be estimated by the XR device.
 The [=marker extent=] information represents the physical bounds of the detected marker, not its pixel dimensions. Applications must not assume that an available extent is exact.
 
@@ -118,43 +115,43 @@ A [=tracked marker=] may have an associated <dfn>decoded marker payload</dfn>. T
 The [=decoded marker payload=] is opaque to this module. It may represent text, a URL, a product identifier, a serial number, application-specific or custom data. This module does not define the semantics, safety, language, directionality or interpretation of [=decoded marker payloads=].
 A [=tracked marker=] may still be spatially tracked even when [=decoded marker payload=] data is unavailable or empty.
 
-In this initial version, [=decoded marker payload=] data is exposed to applications through the `payloadString` attribute on `XRMarkerTrackingResult`. The `payloadString` attribute is `null` when [=decoded marker payload=] data is unavailable or cannot be represented as a string.
+In this initial version, [=decoded marker payload=] data is exposed to applications through the {{XRMarker/payloadString}} attribute on {{XRMarker}}. The {{XRMarker/payloadString}} attribute is `null` when [=decoded marker payload=] data is unavailable or cannot be represented as a string.
 
 Future versions of this module may expose a byte-oriented representation for decoded marker payloads.
 
 Marker identity and session scope {#marker-identity-and-session-scope}
 -------------
 
-A [=tracked marker=] has an associated <dfn>marker identifier</dfn>. A [=marker identifier=] is an internal identifier used by the user agent to associtate observations of a tracked marker during the [=XRSession=] in which it was detected.
+A [=tracked marker=] has an associated <dfn>marker identifier</dfn>. A [=marker identifier=] is an internal identifier used by the user agent to associtate observations of a tracked marker during the {{XRSession}} in which it was detected.
 The [=marker identifier=] is not exposed to applications.
-Each [=tracked marker=] has an associated `XRMarker` object. For as long as a [=tracked marker=] remains associated with an [=XRSession=], the user agent MUST use the same `XRMarker` object to represent that [=tracked marker=].
-Applications can therefore use `XRMarker` object identity to correlate observations of the same [=tracked marker=] across XR frames, including comparing objects for equality or using an `XRMarker` as a map key.
-Marker identity is scoped to the [=XRSession=]. User agents must not imply that an `XRMarker` object or internal [=marker identifier=] represents presistent recognition of the same physical marker across XR sessions.
-If a marker stops being tracked and is later detected again, the user agent may associate it with the same [=tracked marker=] only when it can determine that it represents the same physical marker instance. Otherwise, the user agent may treat it as a new [=tracked marker=] with a new `XRMarker` object.
+Each [=tracked marker=] has an associated {{XRMarker}} object. For as long as a [=tracked marker=] remains associated with an {{XRSession}}, the user agent MUST use the same {{XRMarker}} object to represent that [=tracked marker=].
+Applications can therefore use {{XRMarker}} object identity to correlate observations of the same [=tracked marker=] across XR frames, including comparing objects for equality or using an {{XRMarker}} as a map key.
+Marker identity is scoped to the {{XRSession}}. User agents must not imply that an {{XRMarker}} object or internal [=marker identifier=] represents presistent recognition of the same physical marker across XR sessions.
+If a marker stops being tracked and is later detected again, the user agent may associate it with the same [=tracked marker=] only when it can determine that it represents the same physical marker instance. Otherwise, the user agent may treat it as a new [=tracked marker=] with a new {{XRMarker}} object.
 Applications must not use [=decoded marker payload=] data as a substitute for marker identity. Multiple physical markers may encode identical payloads.
 
 WebXR Device API Integration {#webxr-device-api-integration}
 ============
 
-This module expands the definitions of <dfn>XRSessionInit</dfn>, [=XRSession=], and <dfn>XRFrame</dfn>.
+This module expands the definitions of {{XRSessionInit}}, {{XRSession}}, and {{XRFrame}}.
 
 XRSessionInit {#xr-session-init}
 -------------
 
 ### `marker-tracking` feature descriptor ### {#marker-tracking-feature-descriptor}
 
-This module introduces the string <dfn lt="marker-tracking"><code>marker-tracking</code></dfn> as a new valid [=feature descriptor=] for use in the `requiredFeatures` or `optionalFeatures` sequences when requesting an `immersive-ar` session.
+This module introduces the string <dfn lt="marker-tracking"><code>marker-tracking</code></dfn> as a new valid [=feature descriptor=] for use in the {{XRSessionInit/requiredFeatures}} or {{XRSessionInit/optionalFeatures}} sequences when requesting an `immersive-ar` session.
 The [=marker-tracking=] feature descriptor applies only to `immersive-ar` sessions. A user agent MUST NOT grant the feature to `inline` or `immersive-vr` sessions. Marker tracking is restricted to `immersive-ar` sessions because it exposes the spatial relationship between supported physical markers and the user’s real environment.
 An XR device is [=capable of supporting=] the [=marker-tracking=] feature if it can detect, decode and spatially track supported QR code markers in the user's physical environment.
 
 ### Capability and configuration options ### {#capability-and-configuration-options}
 
-This version of the module does not add any additional members to [=XRSessionInit=]. An application requests marker tracking by including the [=marker-tracking=] feature descriptor in `requiredFeatures` or `optionalFeatures`.
+This version of the module does not add any additional members to {{XRSessionInit}}. An application requests marker tracking by including the [=marker-tracking=] feature descriptor in {{XRSessionInit/requiredFeatures}} or {{XRSessionInit/optionalFeatures}}.
 Individual physical markers are discovered during the XR session. The application does not provide a list of marker targets when requesting the session.
 
 ### Set up marker tracking ### {#set-up-marker-tracking-section}
 
-In order to <dfn export>set up marker tracking</dfn> for a {{XRSystem/requestSession()}} session request, add the following steps to [=initialize the session=] for the new [=XRSession=] |session|:
+In order to <dfn export>set up marker tracking</dfn> for a {{XRSystem/requestSession()}} session request, add the following steps to [=initialize the session=] for the new {{XRSession}} |session|:
 
 1. Set |session|'s [=list of tracked markers=] to an empty list.
 
@@ -167,21 +164,21 @@ XRSession {#xr-session}
 
 ### Marker-tracking session state ### {#marker-tracking-session-state}
 
-Each [=XRSession=] has a <dfn>list of tracked markers</dfn>, which is a list of [=tracked marker] detected during that session. The list is initially empty.
+Each {{XRSession}} has a <dfn>list of tracked markers</dfn>, which is a list of [=tracked marker=] detected during that session. The list is initially empty.
 A [=tracked marker=] is added to the list when the XR device first reports a supported physical marker. A [=tracked marker=] remains associated with the session while the user agent needs to report its tracking state or pose.
 A user agent MAY stop retaining a [=tracked marker=] once it is no longer tracked and no longer needed to report an emulated pose. If the same physical marker is detected again, the user agent MAY associate it with the existing tracked marker only when it can determine that it represents the same physical marker instance.
 
 ### Capability reporting ### {#capability-reporting}
 
-This version of the module does not define a Web exposed capability-reporting method or attribute on [=XRSession=].
+This version of the module does not define a Web exposed capability-reporting method or attribute on {{XRSession}}.
 
 XRFrame {#xr-frame}
 -------------
 
 ### Update tracked markers ### {#update-tracked-markers-section}
 
-When marker tracking is active, add the [=update tracked markers=] algorithm to the [=XRSession=]'s [=list of frame updates=].
-In order to <dfn>update tracked markers</dfn> for an [=XRFrame=] |frame| in an [=XRSession=] |session|, the user agent MUST run the following steps:
+When marker tracking is active, add the [=update tracked markers=] algorithm to the {{XRSession}}'s [=list of frame updates=].
+In order to <dfn>update tracked markers</dfn> for an {{XRFrame}} |frame| in an {{XRSession}} |session|, the user agent MUST run the following steps:
 
 1. Let |observations| be the set of supported physical marker observations reported by the XR device for |frame|.
 
@@ -199,13 +196,13 @@ In order to <dfn>update tracked markers</dfn> for an [=XRFrame=] |frame| in an [
 
       3. Assign |marker| a [=marker identifier=].
 
-      4. Set |marker|'s [=marker space=] to a device [=XRSpace=] associated with |marker|.
+      4. Set |marker|'s [=marker space=] to a device {{XRSpace}} associated with |marker|.
 
-      5. Create a new `XRMarker` |xrMarker|.
+      5. Create a new {{XRMarker}} |xrMarker|.
 
-      6. Set |xrMarker|'s `markerSpace` to |marker|'s [=marker space=].
+      6. Set |xrMarker|'s {{XRMarker/markerSpace}} to |marker|'s [=marker space=].
 
-      7. Set |marker|'s associated `XRMarker` object to |xrMarker|.
+      7. Set |marker|'s associated {{XRMarker}} object to |xrMarker|.
 
       8. Append |marker| to |session|'s [=list of tracked markers=].
 
@@ -217,7 +214,7 @@ In order to <dfn>update tracked markers</dfn> for an [=XRFrame=] |frame| in an [
 
 ### XRMarkerTrackingState ### {#xr-marker-tracking-state}
 
-The `XRMarkerTrackingState` enum represents a tracked marker's [=marker tracking state=].
+The {{XRMarkerTrackingState}} enum represents a tracked marker's [=marker tracking state=].
 
 <pre class="def highlight idl">
 enum XRMarkerTrackingState {
@@ -226,12 +223,12 @@ enum XRMarkerTrackingState {
 };
 </pre>
 
-The `XRMarkerTrackingState` values correspond to the [=marker tracking state=] values defined in the [[#marker-tracking-discovery-model|Discovery Model]].
-The [="untracked"=] [=marker tracking state=] is an internal state used by the algorithms in this module and is not exposed through `XRMarkerTrackingState`. Marker-tracking results are returned only for markers whose state is `"tracked"` or `"emulated"`.
+The {{XRMarkerTrackingState}} values correspond to the [=marker tracking state=] values defined in the [[#marker-tracking-discovery-model|Discovery Model]].
+The [="untracked"=] [=marker tracking state=] is an internal state used by the algorithms in this module and is not exposed through {{XRMarkerTrackingState}}. Marker-tracking results are returned only for markers whose state is `"tracked"` or `"emulated"`.
 
 ### XRMarkerExtent ### {#xr-marker-extent}
 
-An `XRMarkerExtent` represents the physical dimensions of a detected marker in meters.
+An {{XRMarkerExtent}} represents the physical dimensions of a detected marker in meters.
 
 <pre class="idl">
 [SecureContext, Exposed=Window]
@@ -241,15 +238,15 @@ interface XRMarkerExtent {
 };
 </pre>
 
-The `widthInMeters` attribute represents the physical width of the marker in meters, measured along the x-axis of the [=marker space=].
+The {{XRMarkerExtent/widthInMeters}} attribute represents the physical width of the marker in meters, measured along the x-axis of the [=marker space=].
 
-The `heightInMeters` attribute represents the physical height of the marker in meters, measured along the y-axis of the [=marker space=].
+The {{XRMarkerExtent/heightInMeters}} attribute represents the physical height of the marker in meters, measured along the y-axis of the [=marker space=].
 
-An `XRMarkerExtent` represents the physical bounds of the detected marker, not its pixel dimensions. Applications must not assume that the reported dimensions are exact.
+An {{XRMarkerExtent}} represents the physical bounds of the detected marker, not its pixel dimensions. Applications must not assume that the reported dimensions are exact.
 
 ### XRMarkerTrackingResult ### {#xr-marker-tracking-result}
 
-An `XRMarkerTrackingResult` represents the current tracking result for a [=tracked marker=] during an [=XRFrame=].
+An {{XRMarkerTrackingResult}} represents the current tracking result for a [=tracked marker=] during an {{XRFrame}}.
 
 <pre class="idl">
 [SecureContext, Exposed=Window]
@@ -260,15 +257,15 @@ interface XRMarker {
 };
 </pre>
 
-An `XRMarker` represent one physical marker tracked by the XR device during an [=XRSession=]. For as long as the corresponding [=tracked marker=] remains associated with the session, the same `XRMarker` object MUST be used to represent it.
+An {{XRMarker}} represent one physical marker tracked by the XR device during an {{XRSession}}. For as long as the corresponding [=tracked marker=] remains associated with the session, the same {{XRMarker}} object MUST be used to represent it.
 
-The `markerSpace` attribute is the [=marker space=] associated with the [=tracked marker=] for the current frame.
+The {{XRMarker/markerSpace}} attribute is the [=marker space=] associated with the [=tracked marker=] for the current frame.
 
 The `trackingState` attribute is the [=marker tracking state=] associated with the [=tracked marker=] for the current frame.
 
-The `payloadString` attribute is the string representation of the tracked marker's [=decoded marker payload=]. It is `null` if [=decoded marker payload=] data is unavailable or cannot be represented as a string.
+The {{XRMarker/payloadString}} attribute is the string representation of the tracked marker's [=decoded marker payload=]. It is `null` if [=decoded marker payload=] data is unavailable or cannot be represented as a string.
 
-The `extent` attribute is an `XRMarkerExtent` representing the tracked marker's [=marker extent=]. It is `null` if [=marker extent=] information is unavailable.
+The {{XRMarker/extent}} attribute is an {{XRMarkerExtent}} representing the tracked marker's [=marker extent=]. It is `null` if [=marker extent=] information is unavailable.
 
 <pre class="idl">
 [SecureContext, Exposed=Window]
@@ -278,17 +275,17 @@ interface XRMarkerTrackingResult {
 };
 </pre>
 
-An `XRMarkerTrackingResult` represents the tracking result for an `XRMarker` during an [=XRFrame=].
+An {{XRMarkerTrackingResult}} represents the tracking result for an {{XRMarker}} during an {{XRFrame}}.
 
-The `marker` attribute identifies the `XRMarker` associated with this result. Results for the same [=tracked marker=] across multiple XR frames MUST reference the same `XRMarker` object while that marker remains associated with the [=XRSession=].
+The {{XRMarkerTrackingResult/marker}} attribute identifies the {{XRMarker}} associated with this result. Results for the same [=tracked marker=] across multiple XR frames MUST reference the same {{XRMarker}} object while that marker remains associated with the {{XRSession}}.
 
-The `trackingState` attribute is the [=marker tracking state=] associated with the [=tracked marker=] for the current frame.
+The {{XRMarkerTrackingResult/trackingState}} attribute is the [=marker tracking state=] associated with the [=tracked marker=] for the current frame.
 
-The initial version of this module does not expose marker symbology or marker identity on `XRMarkerTrackingResult`. Future versions may add attributes for marker symbology, byte-oriented payload data, more detailed marker geometry or session-scoped marker identity if those are needed.
+The initial version of this module does not expose marker symbology or marker identity on {{XRMarkerTrackingResult}}. Future versions may add attributes for marker symbology, byte-oriented payload data, more detailed marker geometry or session-scoped marker identity if those are needed.
 
 ### Obtain marker-tracking results ### {#obtain-marker-tracking-results-section}
 
-The [=XRFrame=] interface is expanded with a `getMarkerTrackingResults()` method.
+The {{XRFrame}} interface is expanded with a {{XRFrame/getMarkerTrackingResults()}} method.
 
 <pre class="idl">
 partial interface XRFrame {
@@ -296,20 +293,20 @@ partial interface XRFrame {
 };
 </pre>
 
-In order to <dfn export>obtain marker-tracking results</dfn> for an [=XRFrame=] |frame|, the user agent MUST run the following steps:
+In order to <dfn export>obtain marker-tracking results</dfn> for an {{XRFrame}} |frame|, the user agent MUST run the following steps:
 
-1. Let |session| be |frame|'s `session` object.
+1. Let |session| be |frame|'s {{XRFrame/session}} object.
 
 2. Let |results| be an empty list.
 
 3. For each [=tracked marker=] |marker| in |session|'s [=list of tracked markers=]:
     1. If |marker|'s [=marker tracking state=] is `"untracked"`, continue to the next entry.
 
-    2. Let |result| be a new `XRMarkerTrackingResult`.
+    2. Let |result| be a new {{XRMarkerTrackingResult}}.
 
-    3. Set |result|'s `marker` to |marker|'s associated `XRMarker` object.
+    3. Set |result|'s {{XRMarkerTrackingResult/marker}} to |marker|'s associated {{XRMarker}} object.
 
-    4. Set |result|'s `trackingState` to |marker|'s [=marker tracking state=].
+    4. Set |result|'s {{XRMarkerTrackingResult/trackingState}} to |marker|'s [=marker tracking state=].
 
     5. If |marker|'s [=decoded marker payload=] is available and can be represented as a string, set |result|'s `payloadString` to that string. Otherwise, set |result|'s `payloadString` to `null`.
 
@@ -320,9 +317,9 @@ In order to <dfn export>obtain marker-tracking results</dfn> for an [=XRFrame=] 
 4. Return a new `FrozenArray` containing the elements of |results|.
 
 Marker-tracking results only contain information about markers whose [=marker tracking state=] is `"tracked"` or `"emulated"`.
-A marker-tracking result is specific to the frame in which it is obtained. Applications MUST NOT rely on `XRMarkerTrackingResult` object identity to correlate results across XR frames.
-Applications can instead use the result's `marker` attribute to identify the [=tracked marker=]. Results for the same [=tracked marker=] reference the same `XRMarker` object while that marker remains associated with the [=XRSession=].
-Applications can use `result.marker.markerSpace` with {{XRFrame/getPose()}} to obtain the marker's pose relative to another [=XRSpace=].
+A marker-tracking result is specific to the frame in which it is obtained. Applications MUST NOT rely on {{XRMarkerTrackingResult}} object identity to correlate results across XR frames.
+Applications can instead use the result's {{XRMarkerTrackingResult/marker}} attribute to identify the [=tracked marker=]. Results for the same [=tracked marker=] reference the same {{XRMarker}} object while that marker remains associated with the {{XRSession}}.
+Applications can use `result.marker.markerSpace` with {{XRFrame/getPose()}} to obtain the marker's pose relative to another {{XRSpace}}.
 
 Comfort and Presentation Considerations {#comfort-and-presentation-considerations}
 ============
@@ -378,7 +375,7 @@ User agents MAY limit the number of simultaneously reported markers, reduce the 
 Session scope and persistence {#session-scope-and-persistence}
 -------------
 
-Marker identifiers, tracking state, marker spaces and decoded marker data are scoped to the `XRSession` in which they are reported.
+Marker identifiers, tracking state, marker spaces and decoded marker data are scoped to the {{XRSession}} in which they are reported.
 This module does not define a mechanism for correlating a marker observed in one XR session with a marker observed in a later XR session, unless such behaviour is explicitly defined by a future version of this module.
 When an XR session ends, the user agent MUST stop exposing marker-tracking results for that session. This does not prevent an application from explicitly storing decoded marker data using existing Web Platform storage mechanisms, subject to the normal privacy and security expectations of those mechanisms.
 
@@ -415,7 +412,7 @@ Internationalization Considerations {#internationalization-considerations}
 This module does not define QR code or other barcode symbologies, GS1 identifiers or GS1 Digital Link syntax or the application specific semantics of decoded payload data.
 Different marker symbologies and application ecosystems can define their own encoding and payload rules. For example, a GS1 Digital Link payload can associate a machine-readable product identifier with online information. This module does not interpret or modify those rules; it only provides a potential mechanism for associating supported marker data with an XR spatial pose.
 After decoding according to the applicable marker symbology, user agents should return textual payload data without additional case conversion, Unicode normalisation, locale-dependent transformation or inferred language or text direction.
-The initial version exposes decoded marker data through `payloadString`. The normative payload-processing algorithm still needs to define character encoding, error handling behaviour, treatment of non-text payloads and whether future byte-oriented payload access is needed.
+The initial version exposes decoded marker data through {{XRMarker/payloadString}}. The normative payload-processing algorithm still needs to define character encoding, error handling behaviour, treatment of non-text payloads and whether future byte-oriented payload access is needed.
 QR codes are the initial focus of this module because they provide a practical cross-platform starting point. This does not imply that QR codes are the only globally relevant marker format. Future versions may consider other barcode symbologies or marker families where platform support and use cases justify them.
 </section>
 
