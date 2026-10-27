@@ -1,0 +1,2225 @@
+<!doctype html><html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>WebXR Marker Tracking Module</title>
+  <meta content="CG-DRAFT" name="w3c-status">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/cg-draft" rel="stylesheet">
+  <meta content="Bikeshed version 49e9fdd4f, updated Tue Oct 13 14:27:53 2026 -0700" name="generator">
+  <link href="https://immersive-web.github.io/marker-tracking/" rel="canonical">
+  <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
+  <meta content="b970a356dc602bd30393faeb323787905693b7ee" name="revision">
+  <meta content="dark light" name="color-scheme">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
+<style>/* Boilerplate: style-autolinks */
+.css.css, .property.property, .descriptor.descriptor {
+    color: var(--a-normal-text);
+    font-size: inherit;
+    font-family: inherit;
+}
+.css::before, .property::before, .descriptor::before {
+    content: "‘";
+}
+.css::after, .property::after, .descriptor::after {
+    content: "’";
+}
+.property, .descriptor {
+    /* Don't wrap property and descriptor names */
+    white-space: nowrap;
+}
+.type { /* CSS value <type> */
+    font-style: italic;
+}
+pre .property::before, pre .property::after {
+    content: "";
+}
+[data-link-type="property"]::before,
+[data-link-type="propdesc"]::before,
+[data-link-type="descriptor"]::before,
+[data-link-type="value"]::before,
+[data-link-type="function"]::before,
+[data-link-type="at-rule"]::before,
+[data-link-type="selector"]::before,
+[data-link-type="maybe"]::before {
+    content: "‘";
+}
+[data-link-type="property"]::after,
+[data-link-type="propdesc"]::after,
+[data-link-type="descriptor"]::after,
+[data-link-type="value"]::after,
+[data-link-type="function"]::after,
+[data-link-type="at-rule"]::after,
+[data-link-type="selector"]::after,
+[data-link-type="maybe"]::after {
+    content: "’";
+}
+
+[data-link-type].production::before,
+[data-link-type].production::after,
+.prod [data-link-type]::before,
+.prod [data-link-type]::after {
+    content: "";
+}
+
+[data-link-type=element],
+[data-link-type=element-attr] {
+    font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    font-size: .9em;
+}
+[data-link-type=element]::before { content: "<" }
+[data-link-type=element]::after  { content: ">" }
+
+[data-link-type=biblio] {
+    white-space: pre;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+</style>
+<style>/* Boilerplate: style-colors */
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
+body {
+    counter-reset: example figure issue table;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example " counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}
+
+figure.table figcaption {
+    counter-increment: table;
+}
+figure.table figcaption:not(.no-marker)::before {
+    content: "Table " counter(table) " ";
+}
+</style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: 8px;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
+}
+
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
+}
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
+    }
+}
+</style>
+<style>/* Boilerplate: style-idl-highlighting */
+pre.idl.highlight {
+    background: var(--borderedblock-bg, var(--def-bg));
+}
+</style>
+<style>/* Boilerplate: style-issues */
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+<style>/* Boilerplate: style-md-lists */
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}
+</style>
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
+
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
+</style>
+<style>/* Boilerplate: style-selflinks */
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
+<style>/* Boilerplate: style-syntax-highlighting */
+code.highlight { padding: .1em; border-radius: .3em; }
+pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+
+.highlight:not(.idl) { background: rgba(0, 0, 0, .03); }
+c-[a] { color: #990055 } /* Keyword.Declaration */
+c-[b] { color: #990055 } /* Keyword.Type */
+c-[c] { color: #708090 } /* Comment */
+c-[d] { color: #708090 } /* Comment.Multiline */
+c-[e] { color: #0077aa } /* Name.Attribute */
+c-[f] { color: #669900 } /* Name.Tag */
+c-[g] { color: #222222 } /* Name.Variable */
+c-[k] { color: #990055 } /* Keyword */
+c-[l] { color: #000000 } /* Literal */
+c-[m] { color: #000000 } /* Literal.Number */
+c-[n] { color: #0077aa } /* Name */
+c-[o] { color: #999999 } /* Operator */
+c-[p] { color: #999999 } /* Punctuation */
+c-[s] { color: #a67f59 } /* Literal.String */
+c-[t] { color: #a67f59 } /* Literal.String.Single */
+c-[u] { color: #a67f59 } /* Literal.String.Double */
+c-[cp] { color: #708090 } /* Comment.Preproc */
+c-[c1] { color: #708090 } /* Comment.Single */
+c-[cs] { color: #708090 } /* Comment.Special */
+c-[kc] { color: #990055 } /* Keyword.Constant */
+c-[kn] { color: #990055 } /* Keyword.Namespace */
+c-[kp] { color: #990055 } /* Keyword.Pseudo */
+c-[kr] { color: #990055 } /* Keyword.Reserved */
+c-[ld] { color: #000000 } /* Literal.Date */
+c-[nc] { color: #0077aa } /* Name.Class */
+c-[no] { color: #0077aa } /* Name.Constant */
+c-[nd] { color: #0077aa } /* Name.Decorator */
+c-[ni] { color: #0077aa } /* Name.Entity */
+c-[ne] { color: #0077aa } /* Name.Exception */
+c-[nf] { color: #0077aa } /* Name.Function */
+c-[nl] { color: #0077aa } /* Name.Label */
+c-[nn] { color: #0077aa } /* Name.Namespace */
+c-[py] { color: #0077aa } /* Name.Property */
+c-[ow] { color: #999999 } /* Operator.Word */
+c-[mb] { color: #000000 } /* Literal.Number.Bin */
+c-[mf] { color: #000000 } /* Literal.Number.Float */
+c-[mh] { color: #000000 } /* Literal.Number.Hex */
+c-[mi] { color: #000000 } /* Literal.Number.Integer */
+c-[mo] { color: #000000 } /* Literal.Number.Oct */
+c-[sb] { color: #a67f59 } /* Literal.String.Backtick */
+c-[sc] { color: #a67f59 } /* Literal.String.Char */
+c-[sd] { color: #a67f59 } /* Literal.String.Doc */
+c-[se] { color: #a67f59 } /* Literal.String.Escape */
+c-[sh] { color: #a67f59 } /* Literal.String.Heredoc */
+c-[si] { color: #a67f59 } /* Literal.String.Interpol */
+c-[sx] { color: #a67f59 } /* Literal.String.Other */
+c-[sr] { color: #a67f59 } /* Literal.String.Regex */
+c-[ss] { color: #a67f59 } /* Literal.String.Symbol */
+c-[vc] { color: #0077aa } /* Name.Variable.Class */
+c-[vg] { color: #0077aa } /* Name.Variable.Global */
+c-[vi] { color: #0077aa } /* Name.Variable.Instance */
+c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
+
+@media (prefers-color-scheme: dark) {
+    .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
+
+    c-[a] { color: #d33682 } /* Keyword.Declaration */
+    c-[b] { color: #d33682 } /* Keyword.Type */
+    c-[c] { color: #2aa198 } /* Comment */
+    c-[d] { color: #2aa198 } /* Comment.Multiline */
+    c-[e] { color: #268bd2 } /* Name.Attribute */
+    c-[f] { color: #b58900 } /* Name.Tag */
+    c-[g] { color: #cb4b16 } /* Name.Variable */
+    c-[k] { color: #d33682 } /* Keyword */
+    c-[l] { color: #657b83 } /* Literal */
+    c-[m] { color: #657b83 } /* Literal.Number */
+    c-[n] { color: #268bd2 } /* Name */
+    c-[o] { color: #657b83 } /* Operator */
+    c-[p] { color: #657b83 } /* Punctuation */
+    c-[s] { color: #6c71c4 } /* Literal.String */
+    c-[t] { color: #6c71c4 } /* Literal.String.Single */
+    c-[u] { color: #6c71c4 } /* Literal.String.Double */
+    c-[ch] { color: #2aa198 } /* Comment.Hashbang */
+    c-[cp] { color: #2aa198 } /* Comment.Preproc */
+    c-[cpf] { color: #2aa198 } /* Comment.PreprocFile */
+    c-[c1] { color: #2aa198 } /* Comment.Single */
+    c-[cs] { color: #2aa198 } /* Comment.Special */
+    c-[kc] { color: #d33682 } /* Keyword.Constant */
+    c-[kn] { color: #d33682 } /* Keyword.Namespace */
+    c-[kp] { color: #d33682 } /* Keyword.Pseudo */
+    c-[kr] { color: #d33682 } /* Keyword.Reserved */
+    c-[ld] { color: #657b83 } /* Literal.Date */
+    c-[nc] { color: #268bd2 } /* Name.Class */
+    c-[no] { color: #268bd2 } /* Name.Constant */
+    c-[nd] { color: #268bd2 } /* Name.Decorator */
+    c-[ni] { color: #268bd2 } /* Name.Entity */
+    c-[ne] { color: #268bd2 } /* Name.Exception */
+    c-[nf] { color: #268bd2 } /* Name.Function */
+    c-[nl] { color: #268bd2 } /* Name.Label */
+    c-[nn] { color: #268bd2 } /* Name.Namespace */
+    c-[py] { color: #268bd2 } /* Name.Property */
+    c-[ow] { color: #657b83 } /* Operator.Word */
+    c-[mb] { color: #657b83 } /* Literal.Number.Bin */
+    c-[mf] { color: #657b83 } /* Literal.Number.Float */
+    c-[mh] { color: #657b83 } /* Literal.Number.Hex */
+    c-[mi] { color: #657b83 } /* Literal.Number.Integer */
+    c-[mo] { color: #657b83 } /* Literal.Number.Oct */
+    c-[sa] { color: #6c71c4 } /* Literal.String.Affix */
+    c-[sb] { color: #6c71c4 } /* Literal.String.Backtick */
+    c-[sc] { color: #6c71c4 } /* Literal.String.Char */
+    c-[dl] { color: #6c71c4 } /* Literal.String.Delimiter */
+    c-[sd] { color: #6c71c4 } /* Literal.String.Doc */
+    c-[se] { color: #6c71c4 } /* Literal.String.Escape */
+    c-[sh] { color: #6c71c4 } /* Literal.String.Heredoc */
+    c-[si] { color: #6c71c4 } /* Literal.String.Interpol */
+    c-[sx] { color: #6c71c4 } /* Literal.String.Other */
+    c-[sr] { color: #6c71c4 } /* Literal.String.Regex */
+    c-[ss] { color: #6c71c4 } /* Literal.String.Symbol */
+    c-[fm] { color: #268bd2 } /* Name.Function.Magic */
+    c-[vc] { color: #cb4b16 } /* Name.Variable.Class */
+    c-[vg] { color: #cb4b16 } /* Name.Variable.Global */
+    c-[vi] { color: #cb4b16 } /* Name.Variable.Instance */
+    c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
+    c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
+}
+
+@media print {
+    /* Darken colors for print that would otherwise print too faintly */
+    c-[c]  { color: #555555 } /* Comment */
+    c-[d]  { color: #555555 } /* Comment.Multiline */
+    c-[cp] { color: #555555 } /* Comment.Preproc */
+    c-[c1] { color: #555555 } /* Comment.Single */
+    c-[cs] { color: #555555 } /* Comment.Special */
+    c-[o]  { color: #222222 } /* Operator */
+    c-[p]  { color: #222222 } /* Punctuation */
+    c-[ow] { color: #222222 } /* Operator.Word */
+    c-[s]  { color: #664400 } /* Literal.String */
+    c-[t]  { color: #664400 } /* Literal.String.Single */
+    c-[u]  { color: #664400 } /* Literal.String.Double */
+    c-[sb] { color: #664400 } /* Literal.String.Backtick */
+    c-[sc] { color: #664400 } /* Literal.String.Char */
+    c-[sd] { color: #664400 } /* Literal.String.Doc */
+    c-[se] { color: #664400 } /* Literal.String.Escape */
+    c-[sh] { color: #664400 } /* Literal.String.Heredoc */
+    c-[si] { color: #664400 } /* Literal.String.Interpol */
+    c-[sx] { color: #664400 } /* Literal.String.Other */
+    c-[sr] { color: #664400 } /* Literal.String.Regex */
+    c-[ss] { color: #664400 } /* Literal.String.Symbol */
+}
+</style>
+ <body class="h-entry">
+  <div class="head">
+   <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/">
+    <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
+</a>
+</p>
+   <h1 class="no-ref p-name" id="title">WebXR Marker Tracking Module</h1>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#CG-DRAFT">Draft Community Group Report</a>,
+    <time class="dt-updated" datetime="2026-10-27">27 October 2026</time></p>
+   <details open>
+    <summary>More details about this document</summary>
+    <div data-fill-with="spec-metadata">
+     <dl>
+      <dt>This version:
+      <dd><a class="u-url" href="https://immersive-web.github.io/marker-tracking/">https://immersive-web.github.io/marker-tracking/</a>
+      <dt>Issue Tracking:
+      <dd><a href="https://github.com/immersive-web/marker-tracking/issues/">GitHub</a>
+      <dt class="editor">Editors:
+      <dd class="editor h-card p-author vcard" data-editor-id="153370"><a class="email fn p-name u-email" href="mailto:m.alkalbani@samsung.com">Muadh Al Kalbani</a> (<a class="org p-org" href="https://samsung.com/">Samsung</a>)
+      <dd class="editor h-card p-author vcard" data-editor-id="114716"><a class="email fn p-name u-email" href="mailto:alcooper@google.com">Alex Cooper</a> (<a class="org p-org" href="http://google.com/">Google</a>)
+      <dt>Participate:
+      <dd><a href="https://github.com/immersive-web/marker-tracking/issues/new">File an issue</a> (<a href="https://github.com/immersive-web/marker-tracking/issues">open issues</a>)
+      <dd><a href="https://lists.w3.org/Archives/Public/public-immersive-web/">Mailing list archive</a>
+      <dd><a href="irc://irc.w3.org:6665/">W3C’s #immersive-web IRC</a>
+     </dl>
+    </div>
+   </details>
+   <div data-fill-with="warning"></div>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2026 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/software-license/" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply.
+</p>
+   <hr title="Separator for header">
+  </div>
+  <div class="p-summary" data-fill-with="abstract">
+   <h2 class="heading no-num no-ref no-toc settled" id="abstract"><span class="content">Abstract</span></h2>
+   <p>The WebXR Marker Tracking Module expands the WebXR Device API with functionality to detect, decode and spatially track supported physical markers in the user’s environment.</p>
+  </div>
+  <h2 class="heading no-num no-ref no-toc settled" id="sotd"><span class="content">Status of this document</span></h2>
+  <div data-fill-with="status">
+   <p></p>
+  </div>
+  <div data-fill-with="at-risk"></div>
+  <nav data-fill-with="table-of-contents" id="toc">
+   <h2 class="no-num no-ref no-toc" id="contents">Table of Contents</h2>
+   <ol class="toc">
+    <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
+    <li>
+     <a href="#marker-tracking-discovery-model"><span class="secno">2</span> <span class="content">Discovery Model</span></a>
+     <ol class="toc">
+      <li><a href="#marker"><span class="secno">2.1</span> <span class="content">Marker</span></a>
+      <li><a href="#qr-code-markers"><span class="secno">2.2</span> <span class="content">QR code markers</span></a>
+      <li><a href="#marker-tracking-state-section"><span class="secno">2.3</span> <span class="content">Marker tracking state</span></a>
+      <li><a href="#marker-space-and-geometry"><span class="secno">2.4</span> <span class="content">Marker space and geometry</span></a>
+      <li><a href="#decoded-marker-data"><span class="secno">2.5</span> <span class="content">Decoded marker data</span></a>
+      <li><a href="#marker-identity-and-session-scope"><span class="secno">2.6</span> <span class="content">Marker identity and session scope</span></a>
+     </ol>
+    <li>
+     <a href="#webxr-device-api-integration"><span class="secno">3</span> <span class="content">WebXR Device API Integration</span></a>
+     <ol class="toc">
+      <li>
+       <a href="#xr-session-init"><span class="secno">3.1</span> <span class="content">XRSessionInit</span></a>
+       <ol class="toc">
+        <li><a href="#marker-tracking-feature-descriptor"><span class="secno">3.1.1</span> <span class="content">`marker-tracking` feature descriptor</span></a>
+        <li><a href="#capability-and-configuration-options"><span class="secno">3.1.2</span> <span class="content">Capability and configuration options</span></a>
+        <li><a href="#set-up-marker-tracking-section"><span class="secno">3.1.3</span> <span class="content">Set up marker tracking</span></a>
+       </ol>
+      <li>
+       <a href="#xr-session"><span class="secno">3.2</span> <span class="content">XRSession</span></a>
+       <ol class="toc">
+        <li><a href="#marker-tracking-session-state"><span class="secno">3.2.1</span> <span class="content">Marker-tracking session state</span></a>
+        <li><a href="#capability-reporting"><span class="secno">3.2.2</span> <span class="content">Capability reporting</span></a>
+       </ol>
+      <li>
+       <a href="#xr-frame"><span class="secno">3.3</span> <span class="content">XRFrame</span></a>
+       <ol class="toc">
+        <li><a href="#update-tracked-markers-section"><span class="secno">3.3.1</span> <span class="content">Update tracked markers</span></a>
+        <li><a href="#xr-marker-tracking-state"><span class="secno">3.3.2</span> <span class="content">XRMarkerTrackingState</span></a>
+        <li><a href="#xr-marker-extent"><span class="secno">3.3.3</span> <span class="content">XRMarkerExtent</span></a>
+        <li><a href="#xr-marker"><span class="secno">3.3.4</span> <span class="content">XRMarker</span></a>
+        <li><a href="#xr-marker-tracking-result"><span class="secno">3.3.5</span> <span class="content">XRMarkerTrackingResult</span></a>
+        <li><a href="#obtain-marker-tracking-results-section"><span class="secno">3.3.6</span> <span class="content">Obtain marker-tracking results</span></a>
+       </ol>
+     </ol>
+    <li><a href="#comfort-and-presentation-considerations"><span class="secno">4</span> <span class="content">Comfort and Presentation Considerations</span></a>
+    <li>
+     <a href="#security-and-privacy-considerations"><span class="secno">5</span> <span class="content">Security and Privacy Considerations</span></a>
+     <ol class="toc">
+      <li><a href="#sensitive-marker-information"><span class="secno">5.1</span> <span class="content">Sensitive marker information</span></a>
+      <li><a href="#feature-gating-and-user-awareness"><span class="secno">5.2</span> <span class="content">Feature gating and user awareness</span></a>
+      <li><a href="#limiting-unnecessary-environmental-disclosure"><span class="secno">5.3</span> <span class="content">Limiting unnecessary environmental disclosure</span></a>
+      <li><a href="#session-scope-and-persistence"><span class="secno">5.4</span> <span class="content">Session scope and persistence</span></a>
+     </ol>
+    <li><a href="#accessibility-considerations"><span class="secno">6</span> <span class="content">Accessibility Considerations</span></a>
+    <li><a href="#internationalization-considerations"><span class="secno">7</span> <span class="content">Internationalization Considerations</span></a>
+    <li><a href="#ack"><span class="secno">8</span> <span class="content">Acknowledgements</span></a>
+    <li>
+     <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
+     <ol class="toc">
+      <li><a href="#w3c-conventions"><span class="secno"></span> <span class="content">Document conventions</span></a>
+     </ol>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
+     </ol>
+    <li>
+     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ol class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+     </ol>
+    <li><a href="#idl-index"><span class="secno"></span> <span class="content">IDL Index</span></a>
+   </ol>
+  </nav>
+  <main>
+   <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
+   <section class="non-normative">
+This module expands the <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="webxr-device-api">WebXR Device API</dfn> with a mechanism for detecting supported physical markers in the user’s environment, decoding marker data and tracking a marker’s spatial pose.
+The initial version of this module focuses on QR code markers. Unlike the WebXR Image Tracking proposal, which is designed for image targets supplied by the application when requesting an XR session, marker tracking is intended to support physical markers discovered during an active XR session.
+Marker detection, decoding and tracking are performed by the XR device and user agent. The application receives constrained marker tracking results, rather than raw camera images. These results are intended to allow an application to associate decoded marker data with a marker’s pose and use that pose to place or update virtual content in the user’s environment.
+</section>
+   <h2 class="heading settled" data-level="2" id="marker-tracking-discovery-model"><span class="secno">2. </span><span class="content">Discovery Model</span><a class="self-link" href="#marker-tracking-discovery-model"></a></h2>
+   <h3 class="heading settled" data-level="2.1" id="marker"><span class="secno">2.1. </span><span class="content">Marker</span><a class="self-link" href="#marker"></a></h3>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="marker-symbology">marker symbology</dfn> identifies the machine-readable marker format used by a physical marker. QR Code is the initial marker symbology supported by this version of the module.</p>
+   <p>A marker is a physical, machine-readable visual target of a supported <a data-link-type="dfn" href="#marker-symbology" id="ref-for-marker-symbology">marker symbology</a>.</p>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-export data-lt="tracked marker|tracked markers" id="tracked-marker">tracked marker</dfn> corresponds to the information used by the XR device to detect, decode and spatially track one physical instance of a marker during an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession">XRSession</a></code>.</p>
+   <p>A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker">tracked marker</a> represents a physical instance, rather than only its decoded data. Two physically distinct markers that encode identical data may be represented as distinct tracked markers when the XR device can distinguish them.</p>
+   <p>Each <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①">tracked marker</a> has an associated:</p>
+   <ol>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#marker-symbology" id="ref-for-marker-symbology①">marker symbology</a>;</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state">marker tracking state</a>;</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space">marker space</a>;</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload">decoded marker payload</a>, where available;</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent">marker extent</a>, where available;</p>
+    <li data-md>
+     <p><a data-link-type="dfn" href="#marker-identifier" id="ref-for-marker-identifier">marker identifier</a>; and</p>
+    <li data-md>
+     <p><code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker">XRMarker</a></code> object.</p>
+   </ol>
+   <h3 class="heading settled" data-level="2.2" id="qr-code-markers"><span class="secno">2.2. </span><span class="content">QR code markers</span><a class="self-link" href="#qr-code-markers"></a></h3>
+   <p>This first version of the module defines QR codes as its initial supported <a data-link-type="dfn" href="#marker-symbology" id="ref-for-marker-symbology②">marker symbology</a>. A QR code is a two-dimensional matrix barcode that can store various types of data. A user agent determines whether a physical QR code is supported and suitable for detection and tracking.
+This module defines an initial Web-facing representation for decoded QR code payload data through the <code class="idl"><a data-link-type="idl" href="#dom-xrmarker-payloadstring" id="ref-for-dom-xrmarker-payloadstring">payloadString</a></code> attribute on <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①">XRMarker</a></code>. That representation specifies how decoded text is exposed to Web applications. Future versions may expose byte-oriented payload data. It does not define the application-specific meaning, safety, language, directionality or interpretation of that data.
+A user agent may be unable to detect or track QR codes whose physical presentation is unsuitable for reliable detection, including codes with insufficient contrast, visual modifications, embedded imagery, altered modules or other customisation. Non-normative author guidance for marker presentation may be provided separately.
+Future versions of this module may define and support additional marker symbologies. Such additions must not change the behaviour of QR code markers defined by this version.</p>
+   <h3 class="heading settled" data-level="2.3" id="marker-tracking-state-section"><span class="secno">2.3. </span><span class="content">Marker tracking state</span><a class="self-link" href="#marker-tracking-state-section"></a></h3>
+   <p>A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②">tracked marker</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="marker-tracking-state">marker tracking state</dfn>. The <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state①">marker tracking state</a> describes whether the XR device is actively observing the marker, or is reporting a pose derived from a previous observation.
+The possible marker tracking states are:</p>
+   <dl>
+    <dt><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="untracked"><code>"untracked"</code></dfn>
+    <dd> The XR device has no current tracking information for the marker. 
+    <dt><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="tracked"><code>"tracked"</code></dfn>
+    <dd> The marker is currently being actively tracked by the XR device. The marker is at least partially visible to a tracking camera or otherwise actively observed by the tracking system. 
+    <dt><dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="emulated"><code>"emulated"</code></dfn>
+    <dd> The marker was previously tracked during the current XR session, but its current pose is based on a previous observation rather than active observation of the physical marker. 
+   </dl>
+   <p>The <a data-link-type="dfn" href="#untracked" id="ref-for-untracked">"untracked"</a> state is an internal tracking state and is not exposed through <code class="idl"><a data-link-type="idl" href="#xrmarkertrackingresult" id="ref-for-xrmarkertrackingresult">XRMarkerTrackingResult</a></code>.</p>
+   <p>An <a data-link-type="dfn" href="#emulated" id="ref-for-emulated">"emulated"</a> result indicates that the application should not assume that the reported pose still corresponds to the marker’s current physical location. For a marker that is expected to remain stationary, such as one attached to a wall or fixed sign, the previous pose may remain useful while active observation is temporarily unavailable.</p>
+   <p>For a marker that may have moved since it was last observed, the emulated pose may be stale. Applications that require accurate physical alignment should consider hiding, fading, de-emphasising or otherwise indicating uncertainty in marker-relative content until the marker returns to the <a data-link-type="dfn" href="#tracked" id="ref-for-tracked">"tracked"</a> state.</p>
+   <p>When active tracking resumes, applications should account for the possibility that the marker pose may be corrected to a different position or orientation.</p>
+   <div class="note" role="note">
+The <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state②">marker tracking state</a> describes whether the physical marker itself is currently being actively observed by the marker-tracking system.
+This is distinct from <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrpose-emulatedposition" id="ref-for-dom-xrpose-emulatedposition">emulatedPosition</a></code>, which describes whether the computation of an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrpose" id="ref-for-xrpose">XRPose</a></code> between two <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace">XRSpace</a></code> objects relies on an emulated position. An application’s pose query may therefore have emulation characteristics that are separate from whether the marker itself is actively being observed.
+</div>
+   <h3 class="heading settled" data-level="2.4" id="marker-space-and-geometry"><span class="secno">2.4. </span><span class="content">Marker space and geometry</span><a class="self-link" href="#marker-space-and-geometry"></a></h3>
+   <p>A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker③">tracked marker</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="marker-space">marker space</dfn>, which is a device <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace①">XRSpace</a></code> representing the tracking system’s 6DoF pose of the marker in the user’s environment.
+The origin of a <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space①">marker space</a> is the centre of the marker’s physical bounds. The marker’s front face lies in the x-y plane of the <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space②">marker space</a>:</p>
+   <ul>
+    <li data-md>
+     <p>the positive x-axis points towards the marker’s right edge;</p>
+    <li data-md>
+     <p>the positive y-axis points towards the marker’s top edge; and</p>
+    <li data-md>
+     <p>the positive z-axis is orthogonal to the marker plane and points towards the viewer when the marker’s front face is visible.</p>
+   </ul>
+   <p>A <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space③">marker space</a> is used with <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrframe-getpose" id="ref-for-dom-xrframe-getpose">getPose()</a></code> to obtain the marker’s pose relative to another <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace②">XRSpace</a></code>. The tracking system may provide either an actively tracked pose or an emulated pose, as indicated by the marker tracking state.
+A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker④">tracked marker</a> may have an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="marker-extent">marker extent</dfn>. A <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent①">marker extent</a> describes the physical width and height of the marker in metres, measured in the x-y plane of the <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space④">marker space</a>. The <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent②">marker extent</a> information is optional and may be estimated by the XR device.
+The <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent③">marker extent</a> information represents the physical bounds of the detected marker, not its pixel dimensions. Applications must not assume that an available extent is exact.</p>
+   <h3 class="heading settled" data-level="2.5" id="decoded-marker-data"><span class="secno">2.5. </span><span class="content">Decoded marker data</span><a class="self-link" href="#decoded-marker-data"></a></h3>
+   <p>A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker⑤">tracked marker</a> may have an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="decoded-marker-payload">decoded marker payload</dfn>. The <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload①">decoded marker payload</a> is the data obtained by the XR device upon detection of the physical marker.
+The <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload②">decoded marker payload</a> is opaque to this module. It may represent text, a URL, a product identifier, a serial number, application-specific or custom data. This module does not define the semantics, safety, language, directionality or interpretation of <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload③">decoded marker payloads</a>.
+A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker⑥">tracked marker</a> may still be spatially tracked even when <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload④">decoded marker payload</a> data is unavailable or empty.</p>
+   <p>In this initial version, <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload⑤">decoded marker payload</a> data is exposed to applications through the <code class="idl"><a data-link-type="idl" href="#dom-xrmarker-payloadstring" id="ref-for-dom-xrmarker-payloadstring①">payloadString</a></code> attribute on <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker②">XRMarker</a></code>. The <code class="idl"><a data-link-type="idl" href="#dom-xrmarker-payloadstring" id="ref-for-dom-xrmarker-payloadstring②">payloadString</a></code> attribute is `null` when <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload⑥">decoded marker payload</a> data is unavailable or cannot be represented as a string.</p>
+   <p>Future versions of this module may expose a byte-oriented representation for decoded marker payloads.</p>
+   <h3 class="heading settled" data-level="2.6" id="marker-identity-and-session-scope"><span class="secno">2.6. </span><span class="content">Marker identity and session scope</span><a class="self-link" href="#marker-identity-and-session-scope"></a></h3>
+   <p>A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker⑦">tracked marker</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="marker-identifier">marker identifier</dfn>. A <a data-link-type="dfn" href="#marker-identifier" id="ref-for-marker-identifier①">marker identifier</a> is an internal identifier used by the user agent to associate observations of a tracked marker during the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession①">XRSession</a></code> in which it was detected.
+The <a data-link-type="dfn" href="#marker-identifier" id="ref-for-marker-identifier②">marker identifier</a> is not exposed to applications.
+Each <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker⑧">tracked marker</a> has an associated <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker③">XRMarker</a></code> object. For as long as a <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker⑨">tracked marker</a> remains associated with an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession②">XRSession</a></code>, the user agent MUST use the same <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker④">XRMarker</a></code> object to represent that <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①⓪">tracked marker</a>.
+Applications can therefore use <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker⑤">XRMarker</a></code> object identity to correlate observations of the same <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①①">tracked marker</a> across XR frames, including comparing objects for equality or using an <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker⑥">XRMarker</a></code> as a map key.
+Marker identity is scoped to the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession③">XRSession</a></code>. User agents must not imply that an <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker⑦">XRMarker</a></code> object or internal <a data-link-type="dfn" href="#marker-identifier" id="ref-for-marker-identifier③">marker identifier</a> represents persistent recognition of the same physical marker across XR sessions.
+If a marker stops being tracked and is later detected again, the user agent may associate it with the same <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①②">tracked marker</a> only when it can determine that it represents the same physical marker instance. Otherwise, the user agent may treat it as a new <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①③">tracked marker</a> with a new <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker⑧">XRMarker</a></code> object.
+Applications must not use <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload⑦">decoded marker payload</a> data as a substitute for marker identity. Multiple physical markers may encode identical payloads.</p>
+   <h2 class="heading settled" data-level="3" id="webxr-device-api-integration"><span class="secno">3. </span><span class="content">WebXR Device API Integration</span><a class="self-link" href="#webxr-device-api-integration"></a></h2>
+   <p>This module expands the definitions of <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dictdef-xrsessioninit" id="ref-for-dictdef-xrsessioninit">XRSessionInit</a></code>, <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession④">XRSession</a></code>, and <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe">XRFrame</a></code>.</p>
+   <h3 class="heading settled" data-level="3.1" id="xr-session-init"><span class="secno">3.1. </span><span class="content">XRSessionInit</span><a class="self-link" href="#xr-session-init"></a></h3>
+   <h4 class="heading settled" data-level="3.1.1" id="marker-tracking-feature-descriptor"><span class="secno">3.1.1. </span><span class="content">`marker-tracking` feature descriptor</span><a class="self-link" href="#marker-tracking-feature-descriptor"></a></h4>
+   <p>This module introduces the string <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="marker-tracking"><code>marker-tracking</code></dfn> as a new valid <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#feature-descriptor" id="ref-for-feature-descriptor">feature descriptor</a> for use in the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures" id="ref-for-dom-xrsessioninit-requiredfeatures">requiredFeatures</a></code> or <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures" id="ref-for-dom-xrsessioninit-optionalfeatures">optionalFeatures</a></code> sequences when requesting an `immersive-ar` session.
+The <a data-link-type="dfn" href="#marker-tracking" id="ref-for-marker-tracking">marker-tracking</a> feature descriptor applies only to `immersive-ar` sessions. A user agent MUST NOT grant the feature to `inline` or `immersive-vr` sessions. Marker tracking is restricted to `immersive-ar` sessions because it exposes the spatial relationship between supported physical markers and the user’s real environment.
+An XR device is <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#capable-of-supporting" id="ref-for-capable-of-supporting">capable of supporting</a> the <a data-link-type="dfn" href="#marker-tracking" id="ref-for-marker-tracking①">marker-tracking</a> feature if it can detect, decode and spatially track supported QR code markers in the user’s physical environment.</p>
+   <h4 class="heading settled" data-level="3.1.2" id="capability-and-configuration-options"><span class="secno">3.1.2. </span><span class="content">Capability and configuration options</span><a class="self-link" href="#capability-and-configuration-options"></a></h4>
+   <p>This version of the module does not add any additional members to <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dictdef-xrsessioninit" id="ref-for-dictdef-xrsessioninit①">XRSessionInit</a></code>. An application requests marker tracking by including the <a data-link-type="dfn" href="#marker-tracking" id="ref-for-marker-tracking②">marker-tracking</a> feature descriptor in <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures" id="ref-for-dom-xrsessioninit-requiredfeatures①">requiredFeatures</a></code> or <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures" id="ref-for-dom-xrsessioninit-optionalfeatures①">optionalFeatures</a></code>.
+Individual physical markers are discovered during the XR session. The application does not provide a list of marker targets when requesting the session.</p>
+   <h4 class="heading settled" data-level="3.1.3" id="set-up-marker-tracking-section"><span class="secno">3.1.3. </span><span class="content">Set up marker tracking</span><a class="self-link" href="#set-up-marker-tracking-section"></a></h4>
+   <p>In order to <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="set-up-marker-tracking">set up marker tracking</dfn> for a <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession" id="ref-for-dom-xrsystem-requestsession">requestSession()</a></code> session request, add the following steps to <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#initialize-the-session" id="ref-for-initialize-the-session">initialize the session</a> for the new <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑤">XRSession</a></code> <var>session</var>:</p>
+   <ol>
+    <li data-md>
+     <p>Set <var>session</var>’s <a data-link-type="dfn" href="#list-of-tracked-markers" id="ref-for-list-of-tracked-markers">list of tracked markers</a> to an empty list.</p>
+    <li data-md>
+     <p>If `marker-tracking` is not contained in <var>session</var>’s <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xrsession-set-of-granted-features" id="ref-for-xrsession-set-of-granted-features">set of granted features</a>, abort these steps.</p>
+    <li data-md>
+     <p>Initialise any XR device or user agent resources required to detect, decode and track supported markers.</p>
+    <li data-md>
+     <p>Append the <a data-link-type="dfn" href="#update-tracked-markers" id="ref-for-update-tracked-markers">update tracked markers</a> algorithm to <var>session</var>’s <a data-link-type="dfn" href="https://immersive-web.github.io/webxr/#xrsession-list-of-frame-updates" id="ref-for-xrsession-list-of-frame-updates">list of frame updates</a>.</p>
+   </ol>
+   <h3 class="heading settled" data-level="3.2" id="xr-session"><span class="secno">3.2. </span><span class="content">XRSession</span><a class="self-link" href="#xr-session"></a></h3>
+   <h4 class="heading settled" data-level="3.2.1" id="marker-tracking-session-state"><span class="secno">3.2.1. </span><span class="content">Marker-tracking session state</span><a class="self-link" href="#marker-tracking-session-state"></a></h4>
+   <p>Each <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑥">XRSession</a></code> has a <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="list-of-tracked-markers">list of tracked markers</dfn>, which is a list of <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①④">tracked marker</a> detected during that session. The list is initially empty.
+A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①⑤">tracked marker</a> is added to the list when the XR device first reports a supported physical marker. A <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①⑥">tracked marker</a> remains associated with the session while the user agent needs to report its tracking state or pose.
+A user agent MAY stop retaining a <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①⑦">tracked marker</a> once it is no longer tracked and no longer needed to report an emulated pose. If the same physical marker is detected again, the user agent MAY associate it with the existing tracked marker only when it can determine that it represents the same physical marker instance.</p>
+   <h4 class="heading settled" data-level="3.2.2" id="capability-reporting"><span class="secno">3.2.2. </span><span class="content">Capability reporting</span><a class="self-link" href="#capability-reporting"></a></h4>
+   <p>This version of the module does not define a Web exposed capability-reporting method or attribute on <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑦">XRSession</a></code>.</p>
+   <h3 class="heading settled" data-level="3.3" id="xr-frame"><span class="secno">3.3. </span><span class="content">XRFrame</span><a class="self-link" href="#xr-frame"></a></h3>
+   <h4 class="heading settled" data-level="3.3.1" id="update-tracked-markers-section"><span class="secno">3.3.1. </span><span class="content">Update tracked markers</span><a class="self-link" href="#update-tracked-markers-section"></a></h4>
+   <p>In order to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="update-tracked-markers">update tracked markers</dfn> for an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe①">XRFrame</a></code> <var>frame</var>, the user agent MUST run the following steps:</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>session</var> be <var>frame</var>’s <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrframe-session" id="ref-for-dom-xrframe-session">session</a></code> object.</p>
+    <li data-md>
+     <p>Let <var>observations</var> be the set of supported physical marker observations reported by the XR device for <var>frame</var>.</p>
+    <li data-md>
+     <p>For each <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①⑧">tracked marker</a> <var>marker</var> in <var>session</var>’s <a data-link-type="dfn" href="#list-of-tracked-markers" id="ref-for-list-of-tracked-markers①">list of tracked markers</a>, set <var>marker</var>’s <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state③">marker tracking state</a> to `"untracked"`.</p>
+    <li data-md>
+     <p>For each <var>observation</var> in <var>observations</var>:</p>
+    <li data-md>
+     <p>Let <var>marker</var> be the <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker①⑨">tracked marker</a> associated with <var>observation</var>, if one exists.</p>
+    <li data-md>
+     <p>If <var>marker</var> does not exist:</p>
+     <ol>
+      <li data-md>
+       <p>Create a new <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②⓪">tracked marker</a> <var>marker</var>, with its <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload⑧">decoded marker payload</a> and <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent④">marker extent</a> initially unavailable.</p>
+      <li data-md>
+       <p>Set <var>marker</var>’s <a data-link-type="dfn" href="#marker-symbology" id="ref-for-marker-symbology③">marker symbology</a> from <var>observation</var>.</p>
+      <li data-md>
+       <p>Assign <var>marker</var> a <a data-link-type="dfn" href="#marker-identifier" id="ref-for-marker-identifier④">marker identifier</a>.</p>
+      <li data-md>
+       <p>Create a new <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace③">XRSpace</a></code> with its session set to <var>session</var>, its native origin tracking <var>marker</var>’s physical pose according to the coordinate system defined in <a href="#marker-space-and-geometry">§ 2.4 Marker space and geometry</a>, and its origin offset set to the identity transform. Set <var>marker</var>’s <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space⑤">marker space</a> to this space.</p>
+      <li data-md>
+       <p>Create a new <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker⑨">XRMarker</a></code> <var>xrMarker</var> and associate it with <var>marker</var>.</p>
+      <li data-md>
+       <p>Set <var>marker</var>’s associated <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①⓪">XRMarker</a></code> object to <var>xrMarker</var>.</p>
+      <li data-md>
+       <p>Append <var>marker</var> to <var>session</var>’s <a data-link-type="dfn" href="#list-of-tracked-markers" id="ref-for-list-of-tracked-markers②">list of tracked markers</a>.</p>
+     </ol>
+    <li data-md>
+     <p>Set <var>marker</var>’s <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state④">marker tracking state</a> to `"tracked"` if the XR device is actively tracking the physical marker. Otherwise, set <var>marker</var>’s <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state⑤">marker tracking state</a> to `"emulated"` if the XR device provides a pose derived from a previous observation.</p>
+    <li data-md>
+     <p>Update the native origin of <var>marker</var>’s <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space⑥">marker space</a> based on the XR device’s estimate of the marker’s pose, without replacing the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace④">XRSpace</a></code> object.</p>
+    <li data-md>
+     <p>If <var>observation</var> provides <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload⑨">decoded marker payload</a> data, update <var>marker</var>’s <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload①⓪">decoded marker payload</a> from <var>observation</var>. Otherwise, retain its existing value.</p>
+    <li data-md>
+     <p>If <var>observation</var> provides <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent⑤">marker extent</a> information, update <var>marker</var>’s <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent⑥">marker extent</a> from <var>observation</var>. Otherwise, retain its existing value.</p>
+   </ol>
+   <h4 class="heading settled" data-level="3.3.2" id="xr-marker-tracking-state"><span class="secno">3.3.2. </span><span class="content">XRMarkerTrackingState</span><a class="self-link" href="#xr-marker-tracking-state"></a></h4>
+   <p>The <code class="idl"><a data-link-type="idl" href="#enumdef-xrmarkertrackingstate" id="ref-for-enumdef-xrmarkertrackingstate">XRMarkerTrackingState</a></code> enum represents a tracked marker’s <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state⑥">marker tracking state</a>.</p>
+<pre class="def highlight idl"><c- b>enum</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="enum" data-export id="enumdef-xrmarkertrackingstate"><code><c- g>XRMarkerTrackingState</c-></code></dfn> {
+    <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarkerTrackingState" data-dfn-type="enum-value" data-export id="dom-xrmarkertrackingstate-tracked"><code><c- s>"tracked"</c-></code></dfn>,
+    <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarkerTrackingState" data-dfn-type="enum-value" data-export id="dom-xrmarkertrackingstate-emulated"><code><c- s>"emulated"</c-></code></dfn>,
+};
+</pre>
+   <p>The <code class="idl"><a data-link-type="idl" href="#enumdef-xrmarkertrackingstate" id="ref-for-enumdef-xrmarkertrackingstate①">XRMarkerTrackingState</a></code> values correspond to the <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state⑦">marker tracking state</a> values defined in the <a href="#marker-tracking-discovery-model">Discovery Model</a>.
+The <a data-link-type="dfn" href="#untracked" id="ref-for-untracked①">"untracked"</a> <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state⑧">marker tracking state</a> is an internal state used by the algorithms in this module and is not exposed through <code class="idl"><a data-link-type="idl" href="#enumdef-xrmarkertrackingstate" id="ref-for-enumdef-xrmarkertrackingstate②">XRMarkerTrackingState</a></code>. Marker-tracking results are returned only for markers whose state is `"tracked"` or `"emulated"`.</p>
+   <h4 class="heading settled" data-level="3.3.3" id="xr-marker-extent"><span class="secno">3.3.3. </span><span class="content">XRMarkerExtent</span><a class="self-link" href="#xr-marker-extent"></a></h4>
+   <p>An <code class="idl"><a data-link-type="idl" href="#xrmarkerextent" id="ref-for-xrmarkerextent">XRMarkerExtent</a></code> represents the physical dimensions of a detected marker in meters.</p>
+<pre class="def highlight idl">[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext" id="ref-for-SecureContext"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed" id="ref-for-Exposed"><c- g>Exposed</c-></a>=<c- n>Window</c->]
+<c- b>interface</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="interface" data-export id="xrmarkerextent"><code><c- g>XRMarkerExtent</c-></code></dfn> {
+    <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-float" id="ref-for-idl-float"><c- b>float</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarkerExtent" data-dfn-type="attribute" data-export data-readonly data-type="float" id="dom-xrmarkerextent-widthinmeters"><code><c- g>widthInMeters</c-></code></dfn>;
+    <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-float" id="ref-for-idl-float①"><c- b>float</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarkerExtent" data-dfn-type="attribute" data-export data-readonly data-type="float" id="dom-xrmarkerextent-heightinmeters"><code><c- g>heightInMeters</c-></code></dfn>;
+};
+</pre>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-xrmarkerextent-widthinmeters" id="ref-for-dom-xrmarkerextent-widthinmeters">widthInMeters</a></code> attribute represents the physical width of the marker in meters, measured along the x-axis of the <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space⑦">marker space</a>.</p>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-xrmarkerextent-heightinmeters" id="ref-for-dom-xrmarkerextent-heightinmeters">heightInMeters</a></code> attribute represents the physical height of the marker in meters, measured along the y-axis of the <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space⑧">marker space</a>.</p>
+   <p>An <code class="idl"><a data-link-type="idl" href="#xrmarkerextent" id="ref-for-xrmarkerextent①">XRMarkerExtent</a></code> represents the physical bounds of the detected marker, not its pixel dimensions. Applications must not assume that the reported dimensions are exact.</p>
+   <h4 class="heading settled" data-level="3.3.4" id="xr-marker"><span class="secno">3.3.4. </span><span class="content">XRMarker</span><a class="self-link" href="#xr-marker"></a></h4>
+   <p>An <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①①">XRMarker</a></code> represents one physical marker tracked by the XR device during an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑧">XRSession</a></code>.</p>
+<pre class="def highlight idl">[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext" id="ref-for-SecureContext①"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed" id="ref-for-Exposed①"><c- g>Exposed</c-></a>=<c- n>Window</c->]
+<c- b>interface</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="interface" data-export id="xrmarker"><code><c- g>XRMarker</c-></code></dfn> {
+    [<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject" id="ref-for-SameObject"><c- g>SameObject</c-></a>] <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace⑤"><c- n>XRSpace</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarker" data-dfn-type="attribute" data-export data-readonly data-type="XRSpace" id="dom-xrmarker-markerspace"><code><c- g>markerSpace</c-></code></dfn>;
+    <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-DOMString" id="ref-for-idl-DOMString"><c- b>DOMString</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarker" data-dfn-type="attribute" data-export data-readonly data-type="DOMString?" id="dom-xrmarker-payloadstring"><code><c- g>payloadString</c-></code></dfn>;
+    <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="#xrmarkerextent" id="ref-for-xrmarkerextent②"><c- n>XRMarkerExtent</c-></a>? <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarker" data-dfn-type="attribute" data-export data-readonly data-type="XRMarkerExtent?" id="dom-xrmarker-extent"><code><c- g>extent</c-></code></dfn>;
+};
+</pre>
+   <p>For as long as the corresponding <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②①">tracked marker</a> remains associated with the session, the same <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①②">XRMarker</a></code> object MUST be used to represent it.</p>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-xrmarker-markerspace" id="ref-for-dom-xrmarker-markerspace">markerSpace</a></code> getter steps are to return the <a data-link-type="dfn" href="#marker-space" id="ref-for-marker-space⑨">marker space</a> of the <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②②">tracked marker</a> associated with this <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①③">XRMarker</a></code>. The same <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace⑥">XRSpace</a></code> object is returned for the lifetime of the <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①④">XRMarker</a></code>.</p>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-xrmarker-payloadstring" id="ref-for-dom-xrmarker-payloadstring③">payloadString</a></code> getter steps are:</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>marker</var> be the <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②③">tracked marker</a> associated with this <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①⑤">XRMarker</a></code>.</p>
+    <li data-md>
+     <p>If <var>marker</var>’s <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload①①">decoded marker payload</a> is unavailable or cannot be represented as a string, return `null`.</p>
+    <li data-md>
+     <p>Return the string representation of <var>marker</var>’s <a data-link-type="dfn" href="#decoded-marker-payload" id="ref-for-decoded-marker-payload①②">decoded marker payload</a>.</p>
+   </ol>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-xrmarker-extent" id="ref-for-dom-xrmarker-extent">extent</a></code> getter steps are:</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>marker</var> be the <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②④">tracked marker</a> associated with this <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①⑥">XRMarker</a></code>.</p>
+    <li data-md>
+     <p>If <var>marker</var>’s <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent⑦">marker extent</a> is unavailable, return `null`.</p>
+    <li data-md>
+     <p>Let <var>extent</var> be a new <code class="idl"><a data-link-type="idl" href="#xrmarkerextent" id="ref-for-xrmarkerextent③">XRMarkerExtent</a></code>.</p>
+    <li data-md>
+     <p>Set <var>extent</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrmarkerextent-widthinmeters" id="ref-for-dom-xrmarkerextent-widthinmeters①">widthInMeters</a></code> to the width of <var>marker</var>’s <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent⑧">marker extent</a>.</p>
+    <li data-md>
+     <p>Set <var>extent</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrmarkerextent-heightinmeters" id="ref-for-dom-xrmarkerextent-heightinmeters①">heightInMeters</a></code> to the height of <var>marker</var>’s <a data-link-type="dfn" href="#marker-extent" id="ref-for-marker-extent⑨">marker extent</a>.</p>
+    <li data-md>
+     <p>Return <var>extent</var>.</p>
+   </ol>
+   <h4 class="heading settled" data-level="3.3.5" id="xr-marker-tracking-result"><span class="secno">3.3.5. </span><span class="content">XRMarkerTrackingResult</span><a class="self-link" href="#xr-marker-tracking-result"></a></h4>
+   <p>An <code class="idl"><a data-link-type="idl" href="#xrmarkertrackingresult" id="ref-for-xrmarkertrackingresult①">XRMarkerTrackingResult</a></code> represents the current tracking result for a <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②⑤">tracked marker</a> during an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe②">XRFrame</a></code>.</p>
+<pre class="def highlight idl">[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext" id="ref-for-SecureContext②"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed" id="ref-for-Exposed②"><c- g>Exposed</c-></a>=<c- n>Window</c->]
+<c- b>interface</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="interface" data-export id="xrmarkertrackingresult"><code><c- g>XRMarkerTrackingResult</c-></code></dfn> {
+    [<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject" id="ref-for-SameObject①"><c- g>SameObject</c-></a>] <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="#xrmarker" id="ref-for-xrmarker①⑦"><c- n>XRMarker</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarkerTrackingResult" data-dfn-type="attribute" data-export data-readonly data-type="XRMarker" id="dom-xrmarkertrackingresult-marker"><code><c- g>marker</c-></code></dfn>;
+    <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="#enumdef-xrmarkertrackingstate" id="ref-for-enumdef-xrmarkertrackingstate③"><c- n>XRMarkerTrackingState</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRMarkerTrackingResult" data-dfn-type="attribute" data-export data-readonly data-type="XRMarkerTrackingState" id="dom-xrmarkertrackingresult-trackingstate"><code><c- g>trackingState</c-></code></dfn>;
+};
+</pre>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-xrmarkertrackingresult-marker" id="ref-for-dom-xrmarkertrackingresult-marker">marker</a></code> attribute identifies the <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①⑧">XRMarker</a></code> associated with this result. Results for the same <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②⑥">tracked marker</a> across multiple XR frames MUST reference the same <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker①⑨">XRMarker</a></code> object while that marker remains associated with the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑨">XRSession</a></code>.</p>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-xrmarkertrackingresult-trackingstate" id="ref-for-dom-xrmarkertrackingresult-trackingstate">trackingState</a></code> attribute represents the <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state⑨">marker tracking state</a> recorded when this <code class="idl"><a data-link-type="idl" href="#xrmarkertrackingresult" id="ref-for-xrmarkertrackingresult②">XRMarkerTrackingResult</a></code> was created for its corresponding <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe③">XRFrame</a></code>. Its value does not change when the marker’s tracking state is updated in subsequent frames.</p>
+   <p>The initial version of this module does not expose marker symbology or an explicit marker identifier. Future versions may add marker-specific attributes to <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker②⓪">XRMarker</a></code>, such as marker symbology, byte-oriented payload data or more detailed marker geometry, or add frame-specific information to <code class="idl"><a data-link-type="idl" href="#xrmarkertrackingresult" id="ref-for-xrmarkertrackingresult③">XRMarkerTrackingResult</a></code> where needed.</p>
+   <h4 class="heading settled" data-level="3.3.6" id="obtain-marker-tracking-results-section"><span class="secno">3.3.6. </span><span class="content">Obtain marker-tracking results</span><a class="self-link" href="#obtain-marker-tracking-results-section"></a></h4>
+   <p>The <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe④">XRFrame</a></code> interface is expanded with a <code class="idl"><a data-link-type="idl" href="#dom-xrframe-getmarkertrackingresults" id="ref-for-dom-xrframe-getmarkertrackingresults">getMarkerTrackingResults()</a></code> method.</p>
+<pre class="def highlight idl"><c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe⑤"><c- g>XRFrame</c-></a> {
+    <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-frozen-array" id="ref-for-idl-frozen-array"><c- b>FrozenArray</c-></a>&lt;<a data-link-type="idl-name" href="#xrmarkertrackingresult" id="ref-for-xrmarkertrackingresult④"><c- n>XRMarkerTrackingResult</c-></a>> <dfn class="dfn-paneled idl-code" data-dfn-for="XRFrame" data-dfn-type="method" data-export data-lt="getMarkerTrackingResults()" id="dom-xrframe-getmarkertrackingresults"><code><c- g>getMarkerTrackingResults</c-></code></dfn>();
+};
+</pre>
+   <p>The <code class="idl"><a data-link-type="idl" href="#dom-xrframe-getmarkertrackingresults" id="ref-for-dom-xrframe-getmarkertrackingresults①">getMarkerTrackingResults()</a></code> method steps are:</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>frame</var> be this <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe⑥">XRFrame</a></code>.</p>
+    <li data-md>
+     <p>If <var>frame</var>’s <u class="link-error" data-lt="active" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;active&apos; with for=&apos;[&apos;XRFrame&apos;]&apos;.">active</u> boolean is `false`, throw an <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#invalidstateerror" id="ref-for-invalidstateerror">InvalidStateError</a></code> exception.</p>
+    <li data-md>
+     <p>Return the result of running the <a data-link-type="dfn" href="#obtain-marker-tracking-results" id="ref-for-obtain-marker-tracking-results">obtain marker-tracking results</a> algorithm for <var>frame</var>.</p>
+   </ol>
+   <p>In order to <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="obtain-marker-tracking-results">obtain marker-tracking results</dfn> for an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe⑦">XRFrame</a></code> <var>frame</var>, the user agent MUST run the following steps:</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>session</var> be <var>frame</var>’s <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrframe-session" id="ref-for-dom-xrframe-session①">session</a></code> object.</p>
+    <li data-md>
+     <p>Let <var>results</var> be an empty list.</p>
+    <li data-md>
+     <p>For each <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②⑦">tracked marker</a> <var>marker</var> in <var>session</var>’s <a data-link-type="dfn" href="#list-of-tracked-markers" id="ref-for-list-of-tracked-markers③">list of tracked markers</a>:</p>
+     <ol>
+      <li data-md>
+       <p>If <var>marker</var>’s <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state①⓪">marker tracking state</a> is `"untracked"`, continue to the next entry.</p>
+      <li data-md>
+       <p>Let <var>result</var> be a new <code class="idl"><a data-link-type="idl" href="#xrmarkertrackingresult" id="ref-for-xrmarkertrackingresult⑤">XRMarkerTrackingResult</a></code>.</p>
+      <li data-md>
+       <p>Set <var>result</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrmarkertrackingresult-marker" id="ref-for-dom-xrmarkertrackingresult-marker①">marker</a></code> to <var>marker</var>’s associated <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker②①">XRMarker</a></code> object.</p>
+      <li data-md>
+       <p>Set <var>result</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrmarkertrackingresult-trackingstate" id="ref-for-dom-xrmarkertrackingresult-trackingstate①">trackingState</a></code> to <var>marker</var>’s <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state①①">marker tracking state</a>.</p>
+      <li data-md>
+       <p>Append <var>result</var> to <var>results</var>.</p>
+     </ol>
+    <li data-md>
+     <p>Return a new `FrozenArray` containing the elements of <var>results</var>.</p>
+   </ol>
+   <p>Marker-tracking results only contain information about markers whose <a data-link-type="dfn" href="#marker-tracking-state" id="ref-for-marker-tracking-state①②">marker tracking state</a> is `"tracked"` or `"emulated"`.
+A marker-tracking result is specific to the frame in which it is obtained. Applications MUST NOT rely on <code class="idl"><a data-link-type="idl" href="#xrmarkertrackingresult" id="ref-for-xrmarkertrackingresult⑥">XRMarkerTrackingResult</a></code> object identity to correlate results across XR frames.
+Applications can instead use the result’s <code class="idl"><a data-link-type="idl" href="#dom-xrmarkertrackingresult-marker" id="ref-for-dom-xrmarkertrackingresult-marker②">marker</a></code> attribute to identify the <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②⑧">tracked marker</a>. Results for the same <a data-link-type="dfn" href="#tracked-marker" id="ref-for-tracked-marker②⑨">tracked marker</a> reference the same <code class="idl"><a data-link-type="idl" href="#xrmarker" id="ref-for-xrmarker②②">XRMarker</a></code> object while that marker remains associated with the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession①⓪">XRSession</a></code>.
+Applications can use `result.marker.markerSpace` with <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrframe-getpose" id="ref-for-dom-xrframe-getpose①">getPose()</a></code> to obtain the marker’s pose relative to another <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace⑦">XRSpace</a></code>.</p>
+   <h2 class="heading settled" data-level="4" id="comfort-and-presentation-considerations"><span class="secno">4. </span><span class="content">Comfort and Presentation Considerations</span><a class="self-link" href="#comfort-and-presentation-considerations"></a></h2>
+   <section class="non-normative">
+Marker tracking is not intended to provide frame-perfect object tracking. Applications SHOULD account for tracking-state changes, pose updates and possible discontinuities when attaching virtual content to a marker.
+In particular, when a marker result is `"emulated"`, applications should consider whether the physical marker may have moved since it was last actively observed.
+For markers expected to remain stationary, continuing to present marker-relative content using the emulated pose may be appropriate.
+For markers that may move, applications should avoid presenting marker-relative content as though its physical alignment were still known. Depending on the experience, applications may hide, fade or otherwise indicate uncertainty in that content until active tracking resumes.
+Applications should also account for a possible pose correction when a marker transitions from `"emulated"` back to `"tracked"`.
+</section>
+   <h2 class="heading settled" data-level="5" id="security-and-privacy-considerations"><span class="secno">5. </span><span class="content">Security and Privacy Considerations</span><a class="self-link" href="#security-and-privacy-considerations"></a></h2>
+   <h3 class="heading settled" data-level="5.1" id="sensitive-marker-information"><span class="secno">5.1. </span><span class="content">Sensitive marker information</span><a class="self-link" href="#sensitive-marker-information"></a></h3>
+   <p>Marker tracking exposes information derived from the user’s physical environment. Sensitive marker information includes, but is not limited to:</p>
+   <ul>
+    <li data-md>
+     <p>Presence of supported physical markers in the user’s environment;</p>
+    <li data-md>
+     <p>A marker’s spatial pose or approximate physical location;</p>
+    <li data-md>
+     <p>Marker extent, size or other geometry where available;</p>
+    <li data-md>
+     <p>Decoded marker payload data, such as URLs, identifiers, serial numbers or application-specific data; and</p>
+    <li data-md>
+     <p>Changes in marker tracking state over time.</p>
+   </ul>
+   <p>Decoded marker payloads are data observed from markers in the user’s physical environment. They may themselves be sensitive, regardless of whether they describe the user’s environment or not. For example, a marker may encode a product identifier, location identifier, account related value, URL or other application specific content.
+Marker payloads MUST be treated as untrusted input. User agents MUST NOT automatically navigate to, make a network request to, or otherwise act on decoded marker data solely as part of marker detection or tracking. Applications are responsible for safely handling decoded payload data, particularly before navigating, making network requests or using it in security-sensitive contexts.
+Marker tracking provides a narrower privacy surface than raw camera access because it does not expose camera frames to the application. This does not make marker tracking non-sensitive: marker presence, pose and decoded payload data can still reveal information about the user and their surroundings.</p>
+   <h3 class="heading settled" data-level="5.2" id="feature-gating-and-user-awareness"><span class="secno">5.2. </span><span class="content">Feature gating and user awareness</span><a class="self-link" href="#feature-gating-and-user-awareness"></a></h3>
+   <p>Marker tracking is a sensitive WebXR capability and MUST be requested using the <a data-link-type="dfn" href="#marker-tracking" id="ref-for-marker-tracking③">marker-tracking</a> feature descriptor.
+This version of the module restricts marker tracking to `immersive-ar` sessions. Because marker tracking is available only to immersive-ar sessions, it operates within the WebXR Device API’s existing spatial-tracking permission and user-intent framework, including the `xr-spatial-tracking` Permissions Policy.
+This module must additionally define whether the marker-tracking feature requires explicit user consent, whether it needs a separate policy-controlled feature, and whether decoded marker payloads require different treatment from pose-only marker tracking.
+A user agent MUST ensure that there is a clear signal of user intent before enabling marker tracking. The mechanism used to establish user intent, including any permission prompt or other user-facing explanation, is left to the user agent.
+The user agent SHOULD make it clear that enabling marker tracking may allow the application to receive information about supported physical markers in the user’s environment, including decoded marker data where exposed by this module.
+This version of the module treats spatial marker information and decoded marker data as part of the same `marker-tracking` capability. A future version may define more granular controls if there is an interoperable need to distinguish pose-only marker tracking from access to decoded marker data.</p>
+   <h3 class="heading settled" data-level="5.3" id="limiting-unnecessary-environmental-disclosure"><span class="secno">5.3. </span><span class="content">Limiting unnecessary environmental disclosure</span><a class="self-link" href="#limiting-unnecessary-environmental-disclosure"></a></h3>
+   <p>User agents SHOULD limit unnecessary disclosure of marker information. For example, a user agent may wait until a marker is prominently visible in the user’s central view before first reporting it to an application. Once the marker has been detected, the user agent may continue to report its pose when it becomes partially occluded or less prominent, subject to the marker’s tracking state.
+For initial detection, a user agent SHOULD consider whether the marker is sufficiently prominent in the user’s central field of view or camera view to indicate that the user is intentionally scanning it. User agents SHOULD avoid initiating marker tracking for markers that are only briefly visible, distant, too small to be clearly noticed or visible only in peripheral vision.
+The detailed criteria used for initial detection are implementation-defined and may vary according to the device, tracking system and marker symbology.
+User agents MAY limit the number of simultaneously reported markers, reduce the precision of marker geometry, or throttle marker-result updates where necessary to mitigate privacy or fingerprinting risks. Such mitigations MUST NOT introduce tracking behaviour that is likely to cause user discomfort.</p>
+   <h3 class="heading settled" data-level="5.4" id="session-scope-and-persistence"><span class="secno">5.4. </span><span class="content">Session scope and persistence</span><a class="self-link" href="#session-scope-and-persistence"></a></h3>
+   <p>Marker identifiers, tracking state, marker spaces and decoded marker data are scoped to the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession①①">XRSession</a></code> in which they are reported.
+This module does not define a mechanism for correlating a marker observed in one XR session with a marker observed in a later XR session, unless such behaviour is explicitly defined by a future version of this module.
+When an XR session ends, the user agent MUST stop exposing marker-tracking results for that session. This does not prevent an application from explicitly storing decoded marker data using existing Web Platform storage mechanisms, subject to the normal privacy and security expectations of those mechanisms.</p>
+   <h2 class="heading settled" data-level="6" id="accessibility-considerations"><span class="secno">6. </span><span class="content">Accessibility Considerations</span><a class="self-link" href="#accessibility-considerations"></a></h2>
+   <section class="non-normative">
+    
+Marker tracking can support accessible immersive experiences. For example, a detected marker may help an application identify a physical object, retrieve accessible information about it or place virtual guidance relative to it.
+This module does not define accessibility requirements for QR codes, barcodes, GS1 identifiers or other marker symbologies. It does not alter the existing requirements, guidance or deployment practices associated with those machine-readable formats and specifications. Instead, it adds spatial detection and tracking capabilities around supported markers within an XR session.
+Marker scanning can create barriers where it is the only way to access information or complete an action. Applications should provide an equivalent non-marker path where appropriate, particularly for critical actions and for users who may have difficulty locating, seeing, aiming at or physically approaching a marker.
+When an application or content author controls the presentation of a physical marker, it should:
+
+
+    <ul>
+     <li data-md>
+      <p>Provide readable text or other accessible instructions explaining the marker’s purpose and how to use it.</p>
+     <li data-md>
+      <p>Avoid relying on colour alone in the instructions or surrounding visual cues used to identify, distinguish or explain a marker.</p>
+     <li data-md>
+      <p>Use sufficient contrast between the marker and its background;</p>
+     <li data-md>
+      <p>Place the marker where it can reasonably be seen, reached or approached by the intended users;</p>
+     <li data-md>
+      <p>Ensure that the marker is large enough to be detected at its intended viewing distance;</p>
+     <li data-md>
+      <p>Follow the relevant presentation and deployment guidance for supported marker symbologies; and</p>
+     <li data-md>
+      <p>Avoid making marker scanning the only available path for important information, authentication or task completion.</p>
+    </ul>
+    <p>Applications should expose decoded marker information, marker status and related actions through accessible user-interface mechanisms, including HTML UI where possible. For example, an application that displays a virtual overlay after detecting a marker should also provide an accessible textual status or control through its HTML interface.</p>
+   </section>
+   <h2 class="heading settled" data-level="7" id="internationalization-considerations"><span class="secno">7. </span><span class="content">Internationalization Considerations</span><a class="self-link" href="#internationalization-considerations"></a></h2>
+   <section class="non-normative">
+This module does not define QR code or other barcode symbologies, GS1 identifiers or GS1 Digital Link syntax or the application specific semantics of decoded payload data.
+Different marker symbologies and application ecosystems can define their own encoding and payload rules. For example, a GS1 Digital Link payload can associate a machine-readable product identifier with online information. This module does not interpret or modify those rules; it only provides a potential mechanism for associating supported marker data with an XR spatial pose.
+After decoding according to the applicable marker symbology, user agents should return textual payload data without additional case conversion, Unicode normalisation, locale-dependent transformation or inferred language or text direction.
+The initial version exposes decoded marker data through <code class="idl"><a data-link-type="idl" href="#dom-xrmarker-payloadstring" id="ref-for-dom-xrmarker-payloadstring④">payloadString</a></code>. The normative payload-processing algorithm still needs to define character encoding, error handling behaviour, treatment of non-text payloads and whether future byte-oriented payload access is needed.
+QR codes are the initial focus of this module because they provide a practical cross-platform starting point. This does not imply that QR codes are the only globally relevant marker format. Future versions may consider other barcode symbologies or marker families where platform support and use cases justify them.
+</section>
+   <h2 class="heading settled" data-level="8" id="ack"><span class="secno">8. </span><span class="content">Acknowledgements</span><a class="self-link" href="#ack"></a></h2>
+  </main>
+  <div data-fill-with="conformance">
+   <h2 class="heading no-num no-ref settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
+   <h3 class="heading no-num no-ref settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
+   <p>Conformance requirements are expressed
+    with a combination of descriptive assertions
+    and RFC 2119 terminology.
+    The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
+    in the normative parts of this document
+    are to be interpreted as described in RFC 2119.
+    However, for readability,
+    these words do not appear in all uppercase letters in this specification.
+
+    </p>
+   <p>All of the text of this specification is normative
+    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a>
+
+    </p>
+   <p>Examples in this specification are introduced with the words “for example”
+    or are set apart from the normative text
+    with <code>class="example"</code>,
+    like this:
+
+    </p>
+   <div class="example" id="w3c-example">
+    <a class="self-link" href="#w3c-example"></a>
+        
+    <p>This is an example of an informative example.
+    </p>
+   </div>
+   <p>Informative notes begin with the word “Note”
+    and are set apart from the normative text
+    with <code>class="note"</code>,
+    like this:
+
+    </p>
+   <p class="note" role="note">Note, this is an informative note.</p>
+  </div>
+  <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
+  <h2 class="heading no-num no-ref settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li><a href="#decoded-marker-payload">decoded marker payload</a><span>, in § 2.5</span>
+   <li>
+    "emulated"
+    <ul>
+     <li><a href="#emulated">definition of</a><span>, in § 2.3</span>
+     <li><a href="#dom-xrmarkertrackingstate-emulated">enum-value for XRMarkerTrackingState</a><span>, in § 3.3.2</span>
+    </ul>
+   <li><a href="#dom-xrmarker-extent">extent</a><span>, in § 3.3.4</span>
+   <li><a href="#dom-xrframe-getmarkertrackingresults">getMarkerTrackingResults()</a><span>, in § 3.3.6</span>
+   <li><a href="#dom-xrmarkerextent-heightinmeters">heightInMeters</a><span>, in § 3.3.3</span>
+   <li><a href="#list-of-tracked-markers">list of tracked markers</a><span>, in § 3.2.1</span>
+   <li><a href="#dom-xrmarkertrackingresult-marker">marker</a><span>, in § 3.3.5</span>
+   <li><a href="#marker-extent">marker extent</a><span>, in § 2.4</span>
+   <li><a href="#marker-identifier">marker identifier</a><span>, in § 2.6</span>
+   <li><a href="#marker-space">marker space</a><span>, in § 2.4</span>
+   <li><a href="#dom-xrmarker-markerspace">markerSpace</a><span>, in § 3.3.4</span>
+   <li><a href="#marker-symbology">marker symbology</a><span>, in § 2.1</span>
+   <li><a href="#marker-tracking">marker-tracking</a><span>, in § 3.1.1</span>
+   <li><a href="#marker-tracking-state">marker tracking state</a><span>, in § 2.3</span>
+   <li><a href="#obtain-marker-tracking-results">obtain marker-tracking results</a><span>, in § 3.3.6</span>
+   <li><a href="#dom-xrmarker-payloadstring">payloadString</a><span>, in § 3.3.4</span>
+   <li><a href="#set-up-marker-tracking">set up marker tracking</a><span>, in § 3.1.3</span>
+   <li>
+    "tracked"
+    <ul>
+     <li><a href="#tracked">definition of</a><span>, in § 2.3</span>
+     <li><a href="#dom-xrmarkertrackingstate-tracked">enum-value for XRMarkerTrackingState</a><span>, in § 3.3.2</span>
+    </ul>
+   <li><a href="#tracked-marker">tracked marker</a><span>, in § 2.1</span>
+   <li><a href="#tracked-marker">tracked markers</a><span>, in § 2.1</span>
+   <li><a href="#dom-xrmarkertrackingresult-trackingstate">trackingState</a><span>, in § 3.3.5</span>
+   <li><a href="#untracked">"untracked"</a><span>, in § 2.3</span>
+   <li><a href="#update-tracked-markers">update tracked markers</a><span>, in § 3.3.1</span>
+   <li><a href="#webxr-device-api">WebXR Device API</a><span>, in § 1</span>
+   <li><a href="#dom-xrmarkerextent-widthinmeters">widthInMeters</a><span>, in § 3.3.3</span>
+   <li><a href="#xrmarker">XRMarker</a><span>, in § 3.3.4</span>
+   <li><a href="#xrmarkerextent">XRMarkerExtent</a><span>, in § 3.3.3</span>
+   <li><a href="#xrmarkertrackingresult">XRMarkerTrackingResult</a><span>, in § 3.3.5</span>
+   <li><a href="#enumdef-xrmarkertrackingstate">XRMarkerTrackingState</a><span>, in § 3.3.2</span>
+  </ul>
+  <h3 class="heading no-num no-ref settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <ul class="index">
+   <li>
+    <a data-link-type="biblio">[WEBIDL]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="8855a9aa">DOMString</span>
+     <li><span class="dfn-paneled" id="889e932f">Exposed</span>
+     <li><span class="dfn-paneled" id="dcf5fafa">FrozenArray</span>
+     <li><span class="dfn-paneled" id="797018a7">InvalidStateError</span>
+     <li><span class="dfn-paneled" id="a5c91173">SameObject</span>
+     <li><span class="dfn-paneled" id="b75bb3bd">SecureContext</span>
+     <li><span class="dfn-paneled" id="eec1be2d">float</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[WEBXR]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="7a030114">XRFrame</span>
+     <li><span class="dfn-paneled" id="9dfd38d6">XRPose</span>
+     <li><span class="dfn-paneled" id="b23556e5">XRSession</span>
+     <li><span class="dfn-paneled" id="881a9e6b">XRSessionInit</span>
+     <li><span class="dfn-paneled" id="0b566548">XRSpace</span>
+     <li><span class="dfn-paneled" id="d6345ec4">capable of supporting</span>
+     <li><span class="dfn-paneled" id="ffba969d">emulatedPosition</span>
+     <li><span class="dfn-paneled" id="348f253b">feature descriptor</span>
+     <li><span class="dfn-paneled" id="a9d2b73a">getPose(space, baseSpace)</span>
+     <li><span class="dfn-paneled" id="dfa64ff4">initialize the session</span>
+     <li><span class="dfn-paneled" id="7f1caef1">list of frame updates</span>
+     <li><span class="dfn-paneled" id="a42ed5f1">optionalFeatures</span>
+     <li><span class="dfn-paneled" id="dc9c48d6">requestSession(mode)</span>
+     <li><span class="dfn-paneled" id="f3872913">requiredFeatures</span>
+     <li><span class="dfn-paneled" id="7c7eccf9">session</span>
+     <li><span class="dfn-paneled" id="501f1ac2">set of granted features</span>
+    </ul>
+  </ul>
+  <h2 class="heading no-num no-ref settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-rfc2119">[RFC2119]
+   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-webidl">[WEBIDL]
+   <dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
+   <dt id="biblio-webxr">[WEBXR]
+   <dd>Brandon Jones; Manish Goregaokar; Rik Cabanier. <a href="https://immersive-web.github.io/webxr/"><cite>WebXR Device API</cite></a>. URL: <a href="https://immersive-web.github.io/webxr/">https://immersive-web.github.io/webxr/</a>
+  </dl>
+  <h2 class="heading no-num no-ref settled" id="idl-index"><span class="content">IDL Index</span><a class="self-link" href="#idl-index"></a></h2>
+<pre class="def highlight idl"><c- b>enum</c-> <a href="#enumdef-xrmarkertrackingstate"><code><c- g>XRMarkerTrackingState</c-></code></a> {
+    <a href="#dom-xrmarkertrackingstate-tracked"><code><c- s>"tracked"</c-></code></a>,
+    <a href="#dom-xrmarkertrackingstate-emulated"><code><c- s>"emulated"</c-></code></a>,
+};
+
+[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed"><c- g>Exposed</c-></a>=<c- n>Window</c->]
+<c- b>interface</c-> <a href="#xrmarkerextent"><code><c- g>XRMarkerExtent</c-></code></a> {
+    <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-float"><c- b>float</c-></a> <a data-readonly data-type="float" href="#dom-xrmarkerextent-widthinmeters"><code><c- g>widthInMeters</c-></code></a>;
+    <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-float"><c- b>float</c-></a> <a data-readonly data-type="float" href="#dom-xrmarkerextent-heightinmeters"><code><c- g>heightInMeters</c-></code></a>;
+};
+
+[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed"><c- g>Exposed</c-></a>=<c- n>Window</c->]
+<c- b>interface</c-> <a href="#xrmarker"><code><c- g>XRMarker</c-></code></a> {
+    [<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject"><c- g>SameObject</c-></a>] <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="https://immersive-web.github.io/webxr/#xrspace"><c- n>XRSpace</c-></a> <a data-readonly data-type="XRSpace" href="#dom-xrmarker-markerspace"><code><c- g>markerSpace</c-></code></a>;
+    <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-DOMString"><c- b>DOMString</c-></a>? <a data-readonly data-type="DOMString?" href="#dom-xrmarker-payloadstring"><code><c- g>payloadString</c-></code></a>;
+    <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="#xrmarkerextent"><c- n>XRMarkerExtent</c-></a>? <a data-readonly data-type="XRMarkerExtent?" href="#dom-xrmarker-extent"><code><c- g>extent</c-></code></a>;
+};
+
+[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed"><c- g>Exposed</c-></a>=<c- n>Window</c->]
+<c- b>interface</c-> <a href="#xrmarkertrackingresult"><code><c- g>XRMarkerTrackingResult</c-></code></a> {
+    [<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject"><c- g>SameObject</c-></a>] <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="#xrmarker"><c- n>XRMarker</c-></a> <a data-readonly data-type="XRMarker" href="#dom-xrmarkertrackingresult-marker"><code><c- g>marker</c-></code></a>;
+    <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="#enumdef-xrmarkertrackingstate"><c- n>XRMarkerTrackingState</c-></a> <a data-readonly data-type="XRMarkerTrackingState" href="#dom-xrmarkertrackingresult-trackingstate"><code><c- g>trackingState</c-></code></a>;
+};
+
+<c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrframe"><c- g>XRFrame</c-></a> {
+    <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-frozen-array"><c- b>FrozenArray</c-></a>&lt;<a data-link-type="idl-name" href="#xrmarkertrackingresult"><c- n>XRMarkerTrackingResult</c-></a>> <a href="#dom-xrframe-getmarkertrackingresults"><code><c- g>getMarkerTrackingResults</c-></code></a>();
+};
+
+</pre>
+<script>/* Boilerplate: script-dom-helper */
+"use strict";
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"0b566548": {"dfnID":"0b566548","dfnText":"XRSpace","external":true,"refSections":[{"refs":[{"id":"ref-for-xrspace"}],"title":"2.3. Marker tracking state"},{"refs":[{"id":"ref-for-xrspace\u2460"},{"id":"ref-for-xrspace\u2461"}],"title":"2.4. Marker space and geometry"},{"refs":[{"id":"ref-for-xrspace\u2462"},{"id":"ref-for-xrspace\u2463"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-xrspace\u2464"},{"id":"ref-for-xrspace\u2465"}],"title":"3.3.4. XRMarker"},{"refs":[{"id":"ref-for-xrspace\u2466"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"https://immersive-web.github.io/webxr/#xrspace"},
+"348f253b": {"dfnID":"348f253b","dfnText":"feature descriptor","external":true,"refSections":[{"refs":[{"id":"ref-for-feature-descriptor"}],"title":"3.1.1. `marker-tracking` feature descriptor"}],"url":"https://immersive-web.github.io/webxr/#feature-descriptor"},
+"501f1ac2": {"dfnID":"501f1ac2","dfnText":"set of granted features","external":true,"refSections":[{"refs":[{"id":"ref-for-xrsession-set-of-granted-features"}],"title":"3.1.3. Set up marker tracking"}],"url":"https://immersive-web.github.io/webxr/#xrsession-set-of-granted-features"},
+"797018a7": {"dfnID":"797018a7","dfnText":"InvalidStateError","external":true,"refSections":[{"refs":[{"id":"ref-for-invalidstateerror"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"https://webidl.spec.whatwg.org/#invalidstateerror"},
+"7a030114": {"dfnID":"7a030114","dfnText":"XRFrame","external":true,"refSections":[{"refs":[{"id":"ref-for-xrframe"}],"title":"3. WebXR Device API Integration"},{"refs":[{"id":"ref-for-xrframe\u2460"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-xrframe\u2461"},{"id":"ref-for-xrframe\u2462"}],"title":"3.3.5. XRMarkerTrackingResult"},{"refs":[{"id":"ref-for-xrframe\u2463"},{"id":"ref-for-xrframe\u2464"},{"id":"ref-for-xrframe\u2465"},{"id":"ref-for-xrframe\u2466"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"https://immersive-web.github.io/webxr/#xrframe"},
+"7c7eccf9": {"dfnID":"7c7eccf9","dfnText":"session","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrframe-session"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-dom-xrframe-session\u2460"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"https://immersive-web.github.io/webxr/#dom-xrframe-session"},
+"7f1caef1": {"dfnID":"7f1caef1","dfnText":"list of frame updates","external":true,"refSections":[{"refs":[{"id":"ref-for-xrsession-list-of-frame-updates"}],"title":"3.1.3. Set up marker tracking"}],"url":"https://immersive-web.github.io/webxr/#xrsession-list-of-frame-updates"},
+"881a9e6b": {"dfnID":"881a9e6b","dfnText":"XRSessionInit","external":true,"refSections":[{"refs":[{"id":"ref-for-dictdef-xrsessioninit"}],"title":"3. WebXR Device API Integration"},{"refs":[{"id":"ref-for-dictdef-xrsessioninit\u2460"}],"title":"3.1.2. Capability and configuration options"}],"url":"https://immersive-web.github.io/webxr/#dictdef-xrsessioninit"},
+"8855a9aa": {"dfnID":"8855a9aa","dfnText":"DOMString","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-DOMString"}],"title":"3.3.4. XRMarker"}],"url":"https://webidl.spec.whatwg.org/#idl-DOMString"},
+"889e932f": {"dfnID":"889e932f","dfnText":"Exposed","external":true,"refSections":[{"refs":[{"id":"ref-for-Exposed"}],"title":"3.3.3. XRMarkerExtent"},{"refs":[{"id":"ref-for-Exposed\u2460"}],"title":"3.3.4. XRMarker"},{"refs":[{"id":"ref-for-Exposed\u2461"}],"title":"3.3.5. XRMarkerTrackingResult"}],"url":"https://webidl.spec.whatwg.org/#Exposed"},
+"9dfd38d6": {"dfnID":"9dfd38d6","dfnText":"XRPose","external":true,"refSections":[{"refs":[{"id":"ref-for-xrpose"}],"title":"2.3. Marker tracking state"}],"url":"https://immersive-web.github.io/webxr/#xrpose"},
+"a42ed5f1": {"dfnID":"a42ed5f1","dfnText":"optionalFeatures","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrsessioninit-optionalfeatures"}],"title":"3.1.1. `marker-tracking` feature descriptor"},{"refs":[{"id":"ref-for-dom-xrsessioninit-optionalfeatures\u2460"}],"title":"3.1.2. Capability and configuration options"}],"url":"https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures"},
+"a5c91173": {"dfnID":"a5c91173","dfnText":"SameObject","external":true,"refSections":[{"refs":[{"id":"ref-for-SameObject"}],"title":"3.3.4. XRMarker"},{"refs":[{"id":"ref-for-SameObject\u2460"}],"title":"3.3.5. XRMarkerTrackingResult"}],"url":"https://webidl.spec.whatwg.org/#SameObject"},
+"a9d2b73a": {"dfnID":"a9d2b73a","dfnText":"getPose(space, baseSpace)","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrframe-getpose"}],"title":"2.4. Marker space and geometry"},{"refs":[{"id":"ref-for-dom-xrframe-getpose\u2460"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"https://immersive-web.github.io/webxr/#dom-xrframe-getpose"},
+"b23556e5": {"dfnID":"b23556e5","dfnText":"XRSession","external":true,"refSections":[{"refs":[{"id":"ref-for-xrsession"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-xrsession\u2460"},{"id":"ref-for-xrsession\u2461"},{"id":"ref-for-xrsession\u2462"}],"title":"2.6. Marker identity and session scope"},{"refs":[{"id":"ref-for-xrsession\u2463"}],"title":"3. WebXR Device API Integration"},{"refs":[{"id":"ref-for-xrsession\u2464"}],"title":"3.1.3. Set up marker tracking"},{"refs":[{"id":"ref-for-xrsession\u2465"}],"title":"3.2.1. Marker-tracking session state"},{"refs":[{"id":"ref-for-xrsession\u2466"}],"title":"3.2.2. Capability reporting"},{"refs":[{"id":"ref-for-xrsession\u2467"}],"title":"3.3.4. XRMarker"},{"refs":[{"id":"ref-for-xrsession\u2468"}],"title":"3.3.5. XRMarkerTrackingResult"},{"refs":[{"id":"ref-for-xrsession\u2460\u24ea"}],"title":"3.3.6. Obtain marker-tracking results"},{"refs":[{"id":"ref-for-xrsession\u2460\u2460"}],"title":"5.4. Session scope and persistence"}],"url":"https://immersive-web.github.io/webxr/#xrsession"},
+"b75bb3bd": {"dfnID":"b75bb3bd","dfnText":"SecureContext","external":true,"refSections":[{"refs":[{"id":"ref-for-SecureContext"}],"title":"3.3.3. XRMarkerExtent"},{"refs":[{"id":"ref-for-SecureContext\u2460"}],"title":"3.3.4. XRMarker"},{"refs":[{"id":"ref-for-SecureContext\u2461"}],"title":"3.3.5. XRMarkerTrackingResult"}],"url":"https://webidl.spec.whatwg.org/#SecureContext"},
+"d6345ec4": {"dfnID":"d6345ec4","dfnText":"capable of supporting","external":true,"refSections":[{"refs":[{"id":"ref-for-capable-of-supporting"}],"title":"3.1.1. `marker-tracking` feature descriptor"}],"url":"https://immersive-web.github.io/webxr/#capable-of-supporting"},
+"dc9c48d6": {"dfnID":"dc9c48d6","dfnText":"requestSession(mode)","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrsystem-requestsession"}],"title":"3.1.3. Set up marker tracking"}],"url":"https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession"},
+"dcf5fafa": {"dfnID":"dcf5fafa","dfnText":"FrozenArray","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-frozen-array"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"https://webidl.spec.whatwg.org/#idl-frozen-array"},
+"decoded-marker-payload": {"dfnID":"decoded-marker-payload","dfnText":"decoded marker payload","external":false,"refSections":[{"refs":[{"id":"ref-for-decoded-marker-payload"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-decoded-marker-payload\u2460"},{"id":"ref-for-decoded-marker-payload\u2461"},{"id":"ref-for-decoded-marker-payload\u2462"},{"id":"ref-for-decoded-marker-payload\u2463"},{"id":"ref-for-decoded-marker-payload\u2464"},{"id":"ref-for-decoded-marker-payload\u2465"}],"title":"2.5. Decoded marker data"},{"refs":[{"id":"ref-for-decoded-marker-payload\u2466"}],"title":"2.6. Marker identity and session scope"},{"refs":[{"id":"ref-for-decoded-marker-payload\u2467"},{"id":"ref-for-decoded-marker-payload\u2468"},{"id":"ref-for-decoded-marker-payload\u2460\u24ea"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-decoded-marker-payload\u2460\u2460"},{"id":"ref-for-decoded-marker-payload\u2460\u2461"}],"title":"3.3.4. XRMarker"}],"url":"#decoded-marker-payload"},
+"dfa64ff4": {"dfnID":"dfa64ff4","dfnText":"initialize the session","external":true,"refSections":[{"refs":[{"id":"ref-for-initialize-the-session"}],"title":"3.1.3. Set up marker tracking"}],"url":"https://immersive-web.github.io/webxr/#initialize-the-session"},
+"dom-xrframe-getmarkertrackingresults": {"dfnID":"dom-xrframe-getmarkertrackingresults","dfnText":"getMarkerTrackingResults","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrframe-getmarkertrackingresults"},{"id":"ref-for-dom-xrframe-getmarkertrackingresults\u2460"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#dom-xrframe-getmarkertrackingresults"},
+"dom-xrmarker-extent": {"dfnID":"dom-xrmarker-extent","dfnText":"extent","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrmarker-extent"}],"title":"3.3.4. XRMarker"}],"url":"#dom-xrmarker-extent"},
+"dom-xrmarker-markerspace": {"dfnID":"dom-xrmarker-markerspace","dfnText":"markerSpace","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrmarker-markerspace"}],"title":"3.3.4. XRMarker"}],"url":"#dom-xrmarker-markerspace"},
+"dom-xrmarker-payloadstring": {"dfnID":"dom-xrmarker-payloadstring","dfnText":"payloadString","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrmarker-payloadstring"}],"title":"2.2. QR code markers"},{"refs":[{"id":"ref-for-dom-xrmarker-payloadstring\u2460"},{"id":"ref-for-dom-xrmarker-payloadstring\u2461"}],"title":"2.5. Decoded marker data"},{"refs":[{"id":"ref-for-dom-xrmarker-payloadstring\u2462"}],"title":"3.3.4. XRMarker"},{"refs":[{"id":"ref-for-dom-xrmarker-payloadstring\u2463"}],"title":"7. Internationalization Considerations"}],"url":"#dom-xrmarker-payloadstring"},
+"dom-xrmarkerextent-heightinmeters": {"dfnID":"dom-xrmarkerextent-heightinmeters","dfnText":"heightInMeters","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrmarkerextent-heightinmeters"}],"title":"3.3.3. XRMarkerExtent"},{"refs":[{"id":"ref-for-dom-xrmarkerextent-heightinmeters\u2460"}],"title":"3.3.4. XRMarker"}],"url":"#dom-xrmarkerextent-heightinmeters"},
+"dom-xrmarkerextent-widthinmeters": {"dfnID":"dom-xrmarkerextent-widthinmeters","dfnText":"widthInMeters","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrmarkerextent-widthinmeters"}],"title":"3.3.3. XRMarkerExtent"},{"refs":[{"id":"ref-for-dom-xrmarkerextent-widthinmeters\u2460"}],"title":"3.3.4. XRMarker"}],"url":"#dom-xrmarkerextent-widthinmeters"},
+"dom-xrmarkertrackingresult-marker": {"dfnID":"dom-xrmarkertrackingresult-marker","dfnText":"marker","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrmarkertrackingresult-marker"}],"title":"3.3.5. XRMarkerTrackingResult"},{"refs":[{"id":"ref-for-dom-xrmarkertrackingresult-marker\u2460"},{"id":"ref-for-dom-xrmarkertrackingresult-marker\u2461"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#dom-xrmarkertrackingresult-marker"},
+"dom-xrmarkertrackingresult-trackingstate": {"dfnID":"dom-xrmarkertrackingresult-trackingstate","dfnText":"trackingState","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrmarkertrackingresult-trackingstate"}],"title":"3.3.5. XRMarkerTrackingResult"},{"refs":[{"id":"ref-for-dom-xrmarkertrackingresult-trackingstate\u2460"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#dom-xrmarkertrackingresult-trackingstate"},
+"dom-xrmarkertrackingstate-emulated": {"dfnID":"dom-xrmarkertrackingstate-emulated","dfnText":"\"emulated\"","external":false,"refSections":[],"url":"#dom-xrmarkertrackingstate-emulated"},
+"dom-xrmarkertrackingstate-tracked": {"dfnID":"dom-xrmarkertrackingstate-tracked","dfnText":"\"tracked\"","external":false,"refSections":[],"url":"#dom-xrmarkertrackingstate-tracked"},
+"eec1be2d": {"dfnID":"eec1be2d","dfnText":"float","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-float"},{"id":"ref-for-idl-float\u2460"}],"title":"3.3.3. XRMarkerExtent"}],"url":"https://webidl.spec.whatwg.org/#idl-float"},
+"emulated": {"dfnID":"emulated","dfnText":"\"emulated\"","external":false,"refSections":[{"refs":[{"id":"ref-for-emulated"}],"title":"2.3. Marker tracking state"}],"url":"#emulated"},
+"enumdef-xrmarkertrackingstate": {"dfnID":"enumdef-xrmarkertrackingstate","dfnText":"XRMarkerTrackingState","external":false,"refSections":[{"refs":[{"id":"ref-for-enumdef-xrmarkertrackingstate"},{"id":"ref-for-enumdef-xrmarkertrackingstate\u2460"},{"id":"ref-for-enumdef-xrmarkertrackingstate\u2461"}],"title":"3.3.2. XRMarkerTrackingState"},{"refs":[{"id":"ref-for-enumdef-xrmarkertrackingstate\u2462"}],"title":"3.3.5. XRMarkerTrackingResult"}],"url":"#enumdef-xrmarkertrackingstate"},
+"f3872913": {"dfnID":"f3872913","dfnText":"requiredFeatures","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrsessioninit-requiredfeatures"}],"title":"3.1.1. `marker-tracking` feature descriptor"},{"refs":[{"id":"ref-for-dom-xrsessioninit-requiredfeatures\u2460"}],"title":"3.1.2. Capability and configuration options"}],"url":"https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures"},
+"ffba969d": {"dfnID":"ffba969d","dfnText":"emulatedPosition","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrpose-emulatedposition"}],"title":"2.3. Marker tracking state"}],"url":"https://immersive-web.github.io/webxr/#dom-xrpose-emulatedposition"},
+"list-of-tracked-markers": {"dfnID":"list-of-tracked-markers","dfnText":"list of tracked markers","external":false,"refSections":[{"refs":[{"id":"ref-for-list-of-tracked-markers"}],"title":"3.1.3. Set up marker tracking"},{"refs":[{"id":"ref-for-list-of-tracked-markers\u2460"},{"id":"ref-for-list-of-tracked-markers\u2461"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-list-of-tracked-markers\u2462"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#list-of-tracked-markers"},
+"marker-extent": {"dfnID":"marker-extent","dfnText":"marker extent","external":false,"refSections":[{"refs":[{"id":"ref-for-marker-extent"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-marker-extent\u2460"},{"id":"ref-for-marker-extent\u2461"},{"id":"ref-for-marker-extent\u2462"}],"title":"2.4. Marker space and geometry"},{"refs":[{"id":"ref-for-marker-extent\u2463"},{"id":"ref-for-marker-extent\u2464"},{"id":"ref-for-marker-extent\u2465"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-marker-extent\u2466"},{"id":"ref-for-marker-extent\u2467"},{"id":"ref-for-marker-extent\u2468"}],"title":"3.3.4. XRMarker"}],"url":"#marker-extent"},
+"marker-identifier": {"dfnID":"marker-identifier","dfnText":"marker identifier","external":false,"refSections":[{"refs":[{"id":"ref-for-marker-identifier"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-marker-identifier\u2460"},{"id":"ref-for-marker-identifier\u2461"},{"id":"ref-for-marker-identifier\u2462"}],"title":"2.6. Marker identity and session scope"},{"refs":[{"id":"ref-for-marker-identifier\u2463"}],"title":"3.3.1. Update tracked markers"}],"url":"#marker-identifier"},
+"marker-space": {"dfnID":"marker-space","dfnText":"marker space","external":false,"refSections":[{"refs":[{"id":"ref-for-marker-space"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-marker-space\u2460"},{"id":"ref-for-marker-space\u2461"},{"id":"ref-for-marker-space\u2462"},{"id":"ref-for-marker-space\u2463"}],"title":"2.4. Marker space and geometry"},{"refs":[{"id":"ref-for-marker-space\u2464"},{"id":"ref-for-marker-space\u2465"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-marker-space\u2466"},{"id":"ref-for-marker-space\u2467"}],"title":"3.3.3. XRMarkerExtent"},{"refs":[{"id":"ref-for-marker-space\u2468"}],"title":"3.3.4. XRMarker"}],"url":"#marker-space"},
+"marker-symbology": {"dfnID":"marker-symbology","dfnText":"marker symbology","external":false,"refSections":[{"refs":[{"id":"ref-for-marker-symbology"},{"id":"ref-for-marker-symbology\u2460"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-marker-symbology\u2461"}],"title":"2.2. QR code markers"},{"refs":[{"id":"ref-for-marker-symbology\u2462"}],"title":"3.3.1. Update tracked markers"}],"url":"#marker-symbology"},
+"marker-tracking": {"dfnID":"marker-tracking","dfnText":"marker-tracking","external":false,"refSections":[{"refs":[{"id":"ref-for-marker-tracking"},{"id":"ref-for-marker-tracking\u2460"}],"title":"3.1.1. `marker-tracking` feature descriptor"},{"refs":[{"id":"ref-for-marker-tracking\u2461"}],"title":"3.1.2. Capability and configuration options"},{"refs":[{"id":"ref-for-marker-tracking\u2462"}],"title":"5.2. Feature gating and user awareness"}],"url":"#marker-tracking"},
+"marker-tracking-state": {"dfnID":"marker-tracking-state","dfnText":"marker tracking state","external":false,"refSections":[{"refs":[{"id":"ref-for-marker-tracking-state"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-marker-tracking-state\u2460"},{"id":"ref-for-marker-tracking-state\u2461"}],"title":"2.3. Marker tracking state"},{"refs":[{"id":"ref-for-marker-tracking-state\u2462"},{"id":"ref-for-marker-tracking-state\u2463"},{"id":"ref-for-marker-tracking-state\u2464"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-marker-tracking-state\u2465"},{"id":"ref-for-marker-tracking-state\u2466"},{"id":"ref-for-marker-tracking-state\u2467"}],"title":"3.3.2. XRMarkerTrackingState"},{"refs":[{"id":"ref-for-marker-tracking-state\u2468"}],"title":"3.3.5. XRMarkerTrackingResult"},{"refs":[{"id":"ref-for-marker-tracking-state\u2460\u24ea"},{"id":"ref-for-marker-tracking-state\u2460\u2460"},{"id":"ref-for-marker-tracking-state\u2460\u2461"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#marker-tracking-state"},
+"obtain-marker-tracking-results": {"dfnID":"obtain-marker-tracking-results","dfnText":"obtain marker-tracking results","external":false,"refSections":[{"refs":[{"id":"ref-for-obtain-marker-tracking-results"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#obtain-marker-tracking-results"},
+"set-up-marker-tracking": {"dfnID":"set-up-marker-tracking","dfnText":"set up marker tracking","external":false,"refSections":[],"url":"#set-up-marker-tracking"},
+"tracked": {"dfnID":"tracked","dfnText":"\"tracked\"","external":false,"refSections":[{"refs":[{"id":"ref-for-tracked"}],"title":"2.3. Marker tracking state"}],"url":"#tracked"},
+"tracked-marker": {"dfnID":"tracked-marker","dfnText":"tracked marker","external":false,"refSections":[{"refs":[{"id":"ref-for-tracked-marker"},{"id":"ref-for-tracked-marker\u2460"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-tracked-marker\u2461"}],"title":"2.3. Marker tracking state"},{"refs":[{"id":"ref-for-tracked-marker\u2462"},{"id":"ref-for-tracked-marker\u2463"}],"title":"2.4. Marker space and geometry"},{"refs":[{"id":"ref-for-tracked-marker\u2464"},{"id":"ref-for-tracked-marker\u2465"}],"title":"2.5. Decoded marker data"},{"refs":[{"id":"ref-for-tracked-marker\u2466"},{"id":"ref-for-tracked-marker\u2467"},{"id":"ref-for-tracked-marker\u2468"},{"id":"ref-for-tracked-marker\u2460\u24ea"},{"id":"ref-for-tracked-marker\u2460\u2460"},{"id":"ref-for-tracked-marker\u2460\u2461"},{"id":"ref-for-tracked-marker\u2460\u2462"}],"title":"2.6. Marker identity and session scope"},{"refs":[{"id":"ref-for-tracked-marker\u2460\u2463"},{"id":"ref-for-tracked-marker\u2460\u2464"},{"id":"ref-for-tracked-marker\u2460\u2465"},{"id":"ref-for-tracked-marker\u2460\u2466"}],"title":"3.2.1. Marker-tracking session state"},{"refs":[{"id":"ref-for-tracked-marker\u2460\u2467"},{"id":"ref-for-tracked-marker\u2460\u2468"},{"id":"ref-for-tracked-marker\u2461\u24ea"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-tracked-marker\u2461\u2460"},{"id":"ref-for-tracked-marker\u2461\u2461"},{"id":"ref-for-tracked-marker\u2461\u2462"},{"id":"ref-for-tracked-marker\u2461\u2463"}],"title":"3.3.4. XRMarker"},{"refs":[{"id":"ref-for-tracked-marker\u2461\u2464"},{"id":"ref-for-tracked-marker\u2461\u2465"}],"title":"3.3.5. XRMarkerTrackingResult"},{"refs":[{"id":"ref-for-tracked-marker\u2461\u2466"},{"id":"ref-for-tracked-marker\u2461\u2467"},{"id":"ref-for-tracked-marker\u2461\u2468"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#tracked-marker"},
+"untracked": {"dfnID":"untracked","dfnText":"\"untracked\"","external":false,"refSections":[{"refs":[{"id":"ref-for-untracked"}],"title":"2.3. Marker tracking state"},{"refs":[{"id":"ref-for-untracked\u2460"}],"title":"3.3.2. XRMarkerTrackingState"}],"url":"#untracked"},
+"update-tracked-markers": {"dfnID":"update-tracked-markers","dfnText":"update tracked markers","external":false,"refSections":[{"refs":[{"id":"ref-for-update-tracked-markers"}],"title":"3.1.3. Set up marker tracking"}],"url":"#update-tracked-markers"},
+"webxr-device-api": {"dfnID":"webxr-device-api","dfnText":"WebXR Device API","external":false,"refSections":[],"url":"#webxr-device-api"},
+"xrmarker": {"dfnID":"xrmarker","dfnText":"XRMarker","external":false,"refSections":[{"refs":[{"id":"ref-for-xrmarker"}],"title":"2.1. Marker"},{"refs":[{"id":"ref-for-xrmarker\u2460"}],"title":"2.2. QR code markers"},{"refs":[{"id":"ref-for-xrmarker\u2461"}],"title":"2.5. Decoded marker data"},{"refs":[{"id":"ref-for-xrmarker\u2462"},{"id":"ref-for-xrmarker\u2463"},{"id":"ref-for-xrmarker\u2464"},{"id":"ref-for-xrmarker\u2465"},{"id":"ref-for-xrmarker\u2466"},{"id":"ref-for-xrmarker\u2467"}],"title":"2.6. Marker identity and session scope"},{"refs":[{"id":"ref-for-xrmarker\u2468"},{"id":"ref-for-xrmarker\u2460\u24ea"}],"title":"3.3.1. Update tracked markers"},{"refs":[{"id":"ref-for-xrmarker\u2460\u2460"},{"id":"ref-for-xrmarker\u2460\u2461"},{"id":"ref-for-xrmarker\u2460\u2462"},{"id":"ref-for-xrmarker\u2460\u2463"},{"id":"ref-for-xrmarker\u2460\u2464"},{"id":"ref-for-xrmarker\u2460\u2465"}],"title":"3.3.4. XRMarker"},{"refs":[{"id":"ref-for-xrmarker\u2460\u2466"},{"id":"ref-for-xrmarker\u2460\u2467"},{"id":"ref-for-xrmarker\u2460\u2468"},{"id":"ref-for-xrmarker\u2461\u24ea"}],"title":"3.3.5. XRMarkerTrackingResult"},{"refs":[{"id":"ref-for-xrmarker\u2461\u2460"},{"id":"ref-for-xrmarker\u2461\u2461"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#xrmarker"},
+"xrmarkerextent": {"dfnID":"xrmarkerextent","dfnText":"XRMarkerExtent","external":false,"refSections":[{"refs":[{"id":"ref-for-xrmarkerextent"},{"id":"ref-for-xrmarkerextent\u2460"}],"title":"3.3.3. XRMarkerExtent"},{"refs":[{"id":"ref-for-xrmarkerextent\u2461"},{"id":"ref-for-xrmarkerextent\u2462"}],"title":"3.3.4. XRMarker"}],"url":"#xrmarkerextent"},
+"xrmarkertrackingresult": {"dfnID":"xrmarkertrackingresult","dfnText":"XRMarkerTrackingResult","external":false,"refSections":[{"refs":[{"id":"ref-for-xrmarkertrackingresult"}],"title":"2.3. Marker tracking state"},{"refs":[{"id":"ref-for-xrmarkertrackingresult\u2460"},{"id":"ref-for-xrmarkertrackingresult\u2461"},{"id":"ref-for-xrmarkertrackingresult\u2462"}],"title":"3.3.5. XRMarkerTrackingResult"},{"refs":[{"id":"ref-for-xrmarkertrackingresult\u2463"},{"id":"ref-for-xrmarkertrackingresult\u2464"},{"id":"ref-for-xrmarkertrackingresult\u2465"}],"title":"3.3.6. Obtain marker-tracking results"}],"url":"#xrmarkertrackingresult"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#decoded-marker-payload": {"displayText":"decoded marker payload","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"decoded marker payload","type":"dfn","url":"#decoded-marker-payload"},
+"#dom-xrframe-getmarkertrackingresults": {"displayText":"getMarkerTrackingResults()","export":true,"for_":["XRFrame"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"getMarkerTrackingResults()","type":"method","url":"#dom-xrframe-getmarkertrackingresults"},
+"#dom-xrmarker-extent": {"displayText":"extent","export":true,"for_":["XRMarker"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"extent","type":"attribute","url":"#dom-xrmarker-extent"},
+"#dom-xrmarker-markerspace": {"displayText":"markerSpace","export":true,"for_":["XRMarker"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"markerSpace","type":"attribute","url":"#dom-xrmarker-markerspace"},
+"#dom-xrmarker-payloadstring": {"displayText":"payloadString","export":true,"for_":["XRMarker"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"payloadString","type":"attribute","url":"#dom-xrmarker-payloadstring"},
+"#dom-xrmarkerextent-heightinmeters": {"displayText":"heightInMeters","export":true,"for_":["XRMarkerExtent"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"heightInMeters","type":"attribute","url":"#dom-xrmarkerextent-heightinmeters"},
+"#dom-xrmarkerextent-widthinmeters": {"displayText":"widthInMeters","export":true,"for_":["XRMarkerExtent"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"widthInMeters","type":"attribute","url":"#dom-xrmarkerextent-widthinmeters"},
+"#dom-xrmarkertrackingresult-marker": {"displayText":"marker","export":true,"for_":["XRMarkerTrackingResult"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"marker","type":"attribute","url":"#dom-xrmarkertrackingresult-marker"},
+"#dom-xrmarkertrackingresult-trackingstate": {"displayText":"trackingState","export":true,"for_":["XRMarkerTrackingResult"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"trackingState","type":"attribute","url":"#dom-xrmarkertrackingresult-trackingstate"},
+"#emulated": {"displayText":"\"emulated\"","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"\"emulated\"","type":"dfn","url":"#emulated"},
+"#enumdef-xrmarkertrackingstate": {"displayText":"XRMarkerTrackingState","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"XRMarkerTrackingState","type":"enum","url":"#enumdef-xrmarkertrackingstate"},
+"#list-of-tracked-markers": {"displayText":"list of tracked markers","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"list of tracked markers","type":"dfn","url":"#list-of-tracked-markers"},
+"#marker-extent": {"displayText":"marker extent","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"marker extent","type":"dfn","url":"#marker-extent"},
+"#marker-identifier": {"displayText":"marker identifier","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"marker identifier","type":"dfn","url":"#marker-identifier"},
+"#marker-space": {"displayText":"marker space","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"marker space","type":"dfn","url":"#marker-space"},
+"#marker-symbology": {"displayText":"marker symbology","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"marker symbology","type":"dfn","url":"#marker-symbology"},
+"#marker-tracking": {"displayText":"marker-tracking","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"marker-tracking","type":"dfn","url":"#marker-tracking"},
+"#marker-tracking-state": {"displayText":"marker tracking state","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"marker tracking state","type":"dfn","url":"#marker-tracking-state"},
+"#obtain-marker-tracking-results": {"displayText":"obtain marker-tracking results","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"obtain marker-tracking results","type":"dfn","url":"#obtain-marker-tracking-results"},
+"#tracked": {"displayText":"\"tracked\"","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"\"tracked\"","type":"dfn","url":"#tracked"},
+"#tracked-marker": {"displayText":"tracked marker","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"tracked marker","type":"dfn","url":"#tracked-marker"},
+"#untracked": {"displayText":"\"untracked\"","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"\"untracked\"","type":"dfn","url":"#untracked"},
+"#update-tracked-markers": {"displayText":"update tracked markers","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"update tracked markers","type":"dfn","url":"#update-tracked-markers"},
+"#xrmarker": {"displayText":"XRMarker","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"XRMarker","type":"interface","url":"#xrmarker"},
+"#xrmarkerextent": {"displayText":"XRMarkerExtent","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"XRMarkerExtent","type":"interface","url":"#xrmarkerextent"},
+"#xrmarkertrackingresult": {"displayText":"XRMarkerTrackingResult","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"XRMarkerTrackingResult","type":"interface","url":"#xrmarkertrackingresult"},
+"https://immersive-web.github.io/webxr/#capable-of-supporting": {"displayText":"capable of supporting","export":false,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"capable of supporting","type":"dfn","url":"https://immersive-web.github.io/webxr/#capable-of-supporting"},
+"https://immersive-web.github.io/webxr/#dictdef-xrsessioninit": {"displayText":"XRSessionInit","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRSessionInit","type":"dictionary","url":"https://immersive-web.github.io/webxr/#dictdef-xrsessioninit"},
+"https://immersive-web.github.io/webxr/#dom-xrframe-getpose": {"displayText":"getPose(space, baseSpace)","export":true,"for_":["XRFrame"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"getPose(space, baseSpace)","type":"method","url":"https://immersive-web.github.io/webxr/#dom-xrframe-getpose"},
+"https://immersive-web.github.io/webxr/#dom-xrframe-session": {"displayText":"session","export":true,"for_":["XRFrame"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"session","type":"attribute","url":"https://immersive-web.github.io/webxr/#dom-xrframe-session"},
+"https://immersive-web.github.io/webxr/#dom-xrpose-emulatedposition": {"displayText":"emulatedPosition","export":true,"for_":["XRPose"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"emulatedPosition","type":"attribute","url":"https://immersive-web.github.io/webxr/#dom-xrpose-emulatedposition"},
+"https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures": {"displayText":"optionalFeatures","export":true,"for_":["XRSessionInit"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"optionalFeatures","type":"dict-member","url":"https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures"},
+"https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures": {"displayText":"requiredFeatures","export":true,"for_":["XRSessionInit"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"requiredFeatures","type":"dict-member","url":"https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures"},
+"https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession": {"displayText":"requestSession(mode)","export":true,"for_":["XRSystem"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"requestSession(mode)","type":"method","url":"https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession"},
+"https://immersive-web.github.io/webxr/#feature-descriptor": {"displayText":"feature descriptor","export":false,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"feature descriptor","type":"dfn","url":"https://immersive-web.github.io/webxr/#feature-descriptor"},
+"https://immersive-web.github.io/webxr/#initialize-the-session": {"displayText":"initialize the session","export":false,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"initialize the session","type":"dfn","url":"https://immersive-web.github.io/webxr/#initialize-the-session"},
+"https://immersive-web.github.io/webxr/#xrframe": {"displayText":"XRFrame","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRFrame","type":"interface","url":"https://immersive-web.github.io/webxr/#xrframe"},
+"https://immersive-web.github.io/webxr/#xrpose": {"displayText":"XRPose","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRPose","type":"interface","url":"https://immersive-web.github.io/webxr/#xrpose"},
+"https://immersive-web.github.io/webxr/#xrsession": {"displayText":"XRSession","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRSession","type":"interface","url":"https://immersive-web.github.io/webxr/#xrsession"},
+"https://immersive-web.github.io/webxr/#xrsession-list-of-frame-updates": {"displayText":"list of frame updates","export":false,"for_":["XRSession"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"list of frame updates","type":"dfn","url":"https://immersive-web.github.io/webxr/#xrsession-list-of-frame-updates"},
+"https://immersive-web.github.io/webxr/#xrsession-set-of-granted-features": {"displayText":"set of granted features","export":false,"for_":["XRSession"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"set of granted features","type":"dfn","url":"https://immersive-web.github.io/webxr/#xrsession-set-of-granted-features"},
+"https://immersive-web.github.io/webxr/#xrspace": {"displayText":"XRSpace","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRSpace","type":"interface","url":"https://immersive-web.github.io/webxr/#xrspace"},
+"https://webidl.spec.whatwg.org/#Exposed": {"displayText":"Exposed","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"Exposed","type":"extended-attribute","url":"https://webidl.spec.whatwg.org/#Exposed"},
+"https://webidl.spec.whatwg.org/#SameObject": {"displayText":"SameObject","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"SameObject","type":"extended-attribute","url":"https://webidl.spec.whatwg.org/#SameObject"},
+"https://webidl.spec.whatwg.org/#SecureContext": {"displayText":"SecureContext","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"SecureContext","type":"extended-attribute","url":"https://webidl.spec.whatwg.org/#SecureContext"},
+"https://webidl.spec.whatwg.org/#idl-DOMString": {"displayText":"DOMString","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"DOMString","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-DOMString"},
+"https://webidl.spec.whatwg.org/#idl-float": {"displayText":"float","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"float","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-float"},
+"https://webidl.spec.whatwg.org/#idl-frozen-array": {"displayText":"FrozenArray","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"FrozenArray","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-frozen-array"},
+"https://webidl.spec.whatwg.org/#invalidstateerror": {"displayText":"InvalidStateError","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"InvalidStateError","type":"exception","url":"https://webidl.spec.whatwg.org/#invalidstateerror"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.displayText)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const refHintKey = link.getAttribute("data-refhint-key");
+    let key = url;
+    if(refHintKey) {
+        key = refHintKey + "_" + url;
+    }
+    const ref = refsData[key];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
+}
+</script>
