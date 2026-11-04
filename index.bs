@@ -21,6 +21,9 @@ spec: webxr; type: dfn; text: initialize the session
 spec: webxr; type: dfn; text: list of frame updates
 spec: webxr; type: dfn; for: XRSession; text: set of granted features
 spec: webxr; type: dfn; text: capable of supporting
+spec: webxr; type: dfn; for: XRSession; text: ended
+spec: webxr; type: dfn; for: XRSession; text: animation frame
+spec: webxr; type: dfn; for: XRFrame; text: active
 </pre>
 
 Introduction {#intro}
@@ -75,7 +78,7 @@ Marker tracking state {#marker-tracking-state-section}
 
 A [=tracked marker=] has an associated <dfn>marker tracking state</dfn>. The [=marker tracking state=] describes whether the XR device is actively observing the marker, or is reporting a pose derived from a previous observation.
 The possible marker tracking states are:
-<dl> <dt><dfn><code>"untracked"</code></dfn></dt> <dd> The XR device has no current tracking information for the marker. </dd>
+<dl> <dt><dfn><code>"untracked"</code></dfn></dt> <dd> The XR device has no current tracking information for the marker, or marker tracking is paused (see [[#pausing-and-resuming-marker-tracking]]). </dd>
 <dt><dfn><code>"tracked"</code></dfn></dt> <dd> The marker is currently being actively tracked by the XR device. The marker is at least partially visible to a tracking camera or otherwise actively observed by the tracking system. </dd>
 <dt><dfn><code>"emulated"</code></dfn></dt> <dd> The marker was previously tracked during the current XR session, but its current pose is based on a previous observation rather than active observation of the physical marker. </dd> </dl>
 
@@ -155,11 +158,13 @@ In order to <dfn export>set up marker tracking</dfn> for a {{XRSystem/requestSes
 
 1. Set |session|'s [=list of tracked markers=] to an empty list.
 
-2. If `marker-tracking` is not contained in |session|'s [=set of granted features=], abort these steps.
+2. Set |session|'s [=marker tracking active state=] to `true`.
 
-3. Initialise any XR device or user agent resources required to detect, decode and track supported markers.
+3. If `marker-tracking` is not contained in |session|'s [=set of granted features=], abort these steps.
 
-4. Append the [=update tracked markers=] algorithm to |session|'s [=list of frame updates=].
+4. Initialise any XR device or user agent resources required to detect, decode and track supported markers.
+
+5. Append the [=update tracked markers=] algorithm to |session|'s [=list of frame updates=].
 
 XRSession {#xr-session}
 -------------
@@ -169,10 +174,71 @@ XRSession {#xr-session}
 Each {{XRSession}} has a <dfn>list of tracked markers</dfn>, which is a list of [=tracked marker=] detected during that session. The list is initially empty.
 A [=tracked marker=] is added to the list when the XR device first reports a supported physical marker. A [=tracked marker=] remains associated with the session while the user agent needs to report its tracking state or pose.
 A user agent MAY stop retaining a [=tracked marker=] once it is no longer tracked and no longer needed to report an emulated pose. If the same physical marker is detected again, the user agent MAY associate it with the existing tracked marker only when it can determine that it represents the same physical marker instance.
+Each {{XRSession}} has a <dfn>marker tracking active state</dfn>, which is a boolean indicating whether the application currently wants marker tracking to run. The [=marker tracking active state=] is initially `true`. It can be changed by the application using {{XRSession/pauseMarkerTracking()}} and {{XRSession/resumeMarkerTracking()}}.
+
+### Pausing and resuming marker tracking ### {#pausing-and-resuming-marker-tracking}
+
+The {{XRSession}} interface is expanded with an attribute and two methods that allow an application to pause and resume marker tracking during a session, following the pattern established by the WebXR Depth Sensing Module [[WEBXR-DEPTH-SENSING-1]].
+
+<pre class="idl">
+partial interface XRSession {
+  readonly attribute boolean markerTrackingActive;
+  undefined pauseMarkerTracking();
+  undefined resumeMarkerTracking();
+};
+</pre>
+
+The {{XRSession/markerTrackingActive}} getter steps are:
+
+1. Let |session| be [=this=].
+
+2. If `marker-tracking` is not contained in |session|'s [=set of granted features=], throw an {{InvalidStateError}}.
+
+3. Return |session|'s [=marker tracking active state=].
+
+When the [=marker tracking active state=] is `false`, the user agent MUST NOT expose new marker-tracking information to the application: {{XRFrame/getMarkerTrackingResults()}} returns an empty array, the [=update tracked markers=] algorithm does not process new observations, the native origin of a [=marker space=] is not updated, and {{XRFrame/getPose()}} MUST return `null` for any pose query in which either space is a [=marker space=]. Information already exposed through an existing {{XRMarker}}, such as {{XRMarker/payloadString}} and {{XRMarker/extent}}, remains accessible. When the [=marker tracking active state=] is `true`, the user agent MAY expose marker-tracking results, subject to the rest of this module.
+
+The {{XRSession/pauseMarkerTracking()}} method steps are:
+
+1. Let |session| be [=this=].
+
+2. If |session|'s [=XRSession/ended=] value is `true`, throw an {{InvalidStateError}}.
+
+3. Let |frame| be |session|'s [=XRSession/animation frame=].
+
+4. If |frame|'s [=XRFrame/active=] boolean is `false`, throw an {{InvalidStateError}}.
+
+5. If `marker-tracking` is not contained in |session|'s [=set of granted features=], throw a {{NotSupportedError}}.
+
+6. If |session|'s [=marker tracking active state=] is `false`, abort these steps.
+
+7. Set |session|'s [=marker tracking active state=] to `false`.
+
+The {{XRSession/resumeMarkerTracking()}} method steps are:
+
+1. Let |session| be [=this=].
+
+2. If |session|'s [=XRSession/ended=] value is `true`, throw an {{InvalidStateError}}.
+
+3. Let |frame| be |session|'s [=XRSession/animation frame=].
+
+4. If |frame|'s [=XRFrame/active=] boolean is `false`, throw an {{InvalidStateError}}.
+
+5. If `marker-tracking` is not contained in |session|'s [=set of granted features=], throw a {{NotSupportedError}}.
+
+6. If |session|'s [=marker tracking active state=] is `true`, abort these steps.
+
+7. Set |session|'s [=marker tracking active state=] to `true`.
+
+While a session's [=marker tracking active state=] is `false`, the user agent SHOULD take steps to mitigate the performance impact of the [=marker-tracking=] feature, for example by stopping marker detection and decoding on the XR device where the underlying platform permits it. A user agent MAY stop retaining [=tracked markers=] while marker tracking is paused, as described in [[#marker-tracking-session-state]].
+
+<div class="note">
+Pausing marker tracking is an application-level control. Depending on the platform, the user agent may not be able to stop the underlying detection entirely; the guarantee to the application is only that no new marker-tracking information is exposed while paused.
+</div>
 
 ### Capability reporting ### {#capability-reporting}
 
-This version of the module does not define a Web exposed capability-reporting method or attribute on {{XRSession}}.
+This version of the module does not define a Web exposed capability-reporting method or attribute on {{XRSession}}. The {{XRSession/markerTrackingActive}} attribute defined in [[#pausing-and-resuming-marker-tracking]] reflects the session's current [=marker tracking active state=]; it does not report device capabilities.
 
 XRFrame {#xr-frame}
 -------------
@@ -183,11 +249,13 @@ In order to <dfn>update tracked markers</dfn> for an {{XRFrame}} |frame|, the us
 
 1. Let |session| be |frame|'s {{XRFrame/session}} object.
 
-2. Let |observations| be the set of supported physical marker observations reported by the XR device for |frame|.
+2. If |session|'s [=marker tracking active state=] is `false`, set the [=marker tracking state=] of each [=tracked marker=] in |session|'s [=list of tracked markers=] to `"untracked"` and abort these steps.
 
-3. For each [=tracked marker=] |marker| in |session|'s [=list of tracked markers=], set |marker|'s [=marker tracking state=] to `"untracked"`.
+3. Let |observations| be the set of supported physical marker observations reported by the XR device for |frame|.
 
-4. For each |observation| in |observations|:
+4. For each [=tracked marker=] |marker| in |session|'s [=list of tracked markers=], set |marker|'s [=marker tracking state=] to `"untracked"`.
+
+5. For each |observation| in |observations|:
 
    1. Let |marker| be the [=tracked marker=] associated with |observation|, if one exists.
 
@@ -328,7 +396,9 @@ In order to <dfn export>obtain marker-tracking results</dfn> for an {{XRFrame}} 
 
 2. Let |results| be an empty list.
 
-3. For each [=tracked marker=] |marker| in |session|'s [=list of tracked markers=]:
+3. If |session|'s [=marker tracking active state=] is `false`, return a new `FrozenArray` containing no elements.
+
+4. For each [=tracked marker=] |marker| in |session|'s [=list of tracked markers=]:
     1. If |marker|'s [=marker tracking state=] is `"untracked"`, continue to the next entry.
 
     2. Let |result| be a new {{XRMarkerTrackingResult}}.
@@ -339,7 +409,7 @@ In order to <dfn export>obtain marker-tracking results</dfn> for an {{XRFrame}} 
 
     5. Append |result| to |results|.
 
-4. Return a new `FrozenArray` containing the elements of |results|.
+5. Return a new `FrozenArray` containing the elements of |results|.
 
 Marker-tracking results only contain information about markers whose [=marker tracking state=] is `"tracked"` or `"emulated"`.
 A marker-tracking result is specific to the frame in which it is obtained. Applications MUST NOT rely on {{XRMarkerTrackingResult}} object identity to correlate results across XR frames.
@@ -355,6 +425,7 @@ In particular, when a marker result is `"emulated"`, applications should conside
 For markers expected to remain stationary, continuing to present marker-relative content using the emulated pose may be appropriate.
 For markers that may move, applications should avoid presenting marker-relative content as though its physical alignment were still known. Depending on the experience, applications may hide, fade or otherwise indicate uncertainty in that content until active tracking resumes.
 Applications should also account for a possible pose correction when a marker transitions from `"emulated"` back to `"tracked"`.
+After {{XRSession/resumeMarkerTracking()}}, a previously tracked marker may be reported again as `"tracked"` or `"emulated"`, or as a new {{XRMarker}} object if the user agent cannot determine that it is the same physical marker (see [[#marker-identity-and-session-scope]]). Applications should treat a pause/resume cycle like any other interruption of active tracking.
 </section>
 
 Security and Privacy Considerations {#security-and-privacy-considerations}
@@ -396,6 +467,7 @@ User agents SHOULD limit unnecessary disclosure of marker information. For examp
 For initial detection, a user agent SHOULD consider whether the marker is sufficiently prominent in the user’s central field of view or camera view to indicate that the user is intentionally scanning it. User agents SHOULD avoid initiating marker tracking for markers that are only briefly visible, distant, too small to be clearly noticed or visible only in peripheral vision.
 The detailed criteria used for initial detection are implementation-defined and may vary according to the device, tracking system and marker symbology.
 User agents MAY limit the number of simultaneously reported markers, reduce the precision of marker geometry, or throttle marker-result updates where necessary to mitigate privacy or fingerprinting risks. Such mitigations MUST NOT introduce tracking behaviour that is likely to cause user discomfort.
+Applications that do not continuously need marker-tracking results SHOULD pause marker tracking with {{XRSession/pauseMarkerTracking()}} and resume it only when needed. While paused, no new marker presence, pose or decoded payload information is exposed, which limits the period during which the user's environment is observed for markers. Pausing and resuming operate within the signal of user intent already established for the `marker-tracking` feature; they neither revoke it nor require a new one. A user agent MAY reflect the [=marker tracking active state=] in any user-facing indicator it provides for marker tracking.
 
 Session scope and persistence {#session-scope-and-persistence}
 -------------
