@@ -194,7 +194,7 @@ A [=tracked marker=] is added to the list when the XR device first reports a sup
 
 A user agent MAY stop retaining a [=tracked marker=] once it is no longer tracked and no longer needed to report an emulated pose. If the same physical marker is detected again, the user agent MAY associate it with the existing tracked marker only when it can determine that it represents the same physical marker instance.
 
-Each {{XRSession}} has a <dfn>marker tracking active state</dfn>, which is a boolean indicating whether the application currently wants marker tracking to run. The [=marker tracking active state=] is initially `true`. It can be changed by the application using {{XRSession/pauseMarkerTracking()}} and {{XRSession/resumeMarkerTracking()}}.
+Each {{XRSession}} has a <dfn>marker tracking active state</dfn>, which is a boolean indicating whether the application currently wants marker tracking to run. The [=marker tracking active state=] is initially `false`. It can be changed by the application using {{XRSession/pauseMarkerTracking()}} and {{XRSession/resumeMarkerTracking()}}.
 
 ### Pausing and resuming marker tracking ### {#pausing-and-resuming-marker-tracking}
 
