@@ -212,8 +212,6 @@ The {{XRSession/markerTrackingActive}} getter steps are:
 
 1. Let |session| be [=this=].
 
-1. If `marker-tracking` is not contained in |session|'s [=set of granted features=], throw an {{InvalidStateError}}.
-
 1. Return |session|'s [=marker tracking active state=].
 
 When the [=marker tracking active state=] is `false`, the user agent MUST NOT expose new marker-tracking information to the application: {{XRFrame/getMarkerTrackingResults()}} returns an empty array, the [=update tracked markers=] algorithm does not process new observations, the native origin of a [=marker space=] is not updated, and {{XRFrame/getPose()}} MUST return `null` for any pose query in which either space is a [=marker space=]. Information already exposed through an existing {{XRMarker}}, such as {{XRMarker/payloadString}} and {{XRMarker/extent}}, remains accessible. When the [=marker tracking active state=] is `true`, the user agent MAY expose marker-tracking results, subject to the rest of this module.
